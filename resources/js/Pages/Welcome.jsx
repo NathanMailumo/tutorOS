@@ -99,7 +99,7 @@ export default function Welcome({ auth }) {
                 <div className="z-20 mx-auto my-auto flex max-w-xl flex-col items-center text-center">
                     {/* Category Tag */}
                     <div className="mb-6 inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#FF6B35] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:text-sm">
-                        <span>✨</span> TEACHING PLATFORM
+                        <span></span> Peer-Mentor Platform
                     </div>
 
                     {/* Main Headline */}
