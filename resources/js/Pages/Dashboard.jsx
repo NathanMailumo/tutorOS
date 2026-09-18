@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function Dashboard({ stats }) {
     const user = usePage().props.auth.user;
@@ -61,14 +61,13 @@ export default function Dashboard({ stats }) {
                                 cards, examples, and quiz questions.
                             </p>
                         </div>
-                        <button
-                            type="button"
-                            disabled
-                            className="inline-flex cursor-not-allowed items-center gap-2 rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-sm font-black text-black opacity-60 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                        <Link
+                            href={route('sessions.index')}
+                            className="inline-flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-sm font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                         >
                             <span>Create</span>
                             <span>→</span>
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

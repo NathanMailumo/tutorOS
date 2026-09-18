@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +21,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])
         ->middleware('verified')
         ->name('dashboard');
+    Route::get('/sessions', [SessionController::class, 'sessionIndex'])
+        ->middleware('verified')
+        ->name('sessions.index');
+    Route::get('/quizzes', [QuizController::class, 'quizIndex'])
+        ->middleware('verified')
+        ->name('quizzes.index');
+    Route::get('/resources', [ResourceController::class, 'resourceIndex'])
+        ->middleware('verified')
+        ->name('resources.index');
 });
 
 require __DIR__.'/auth.php';

@@ -8,12 +8,9 @@ export default function AuthenticatedLayout({ children }) {
     // Navigation items configuration
     const navItems = [
         { name: 'Dashboard', route: 'dashboard' },
-        // { name: 'Teaching Sessions', route: 'sessions.index' },
-        // { name: 'Create Session', route: 'sessions.create' },
-        // { name: 'Quiz Generator', route: 'quizzes.index' },
-        // { name: 'Revision Packs', route: 'revision-packs.index' },
-        // { name: 'Shared Sessions', route: 'shared-sessions.index' },
-        // { name: 'Resources', route: 'resources.index' },
+        { name: 'Sessions', route: 'sessions.index' },
+        { name: 'Quiz Generator', route: 'quizzes.index' },
+        { name: 'Resources', route: 'resources.index' },
     ];
 
     return (
