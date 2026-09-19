@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import CreateResourceModal from '@/Components/CreateResourceModal';
 
 export default function Dashboard() {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
@@ -16,9 +20,9 @@ export default function Dashboard() {
                 }}
             >
                 {/* DASHBOARD HEADER */}
-                <div className="z-10 max-w-2xl space-y-2 pb-2 pt-4">
+                <div className="z-10 max-w-2xl space-y-2 pb-2 pt-2">
                     <h1 className="flex items-center gap-2 text-3xl font-black tracking-tight text-[#121212] md:text-4xl">
-                        Welcome to TutorOS{' '}
+                        Welcome to <span className="text-red-600">TutorOS</span>{' '}
                         <span className="inline-block animate-bounce">👋</span>
                     </h1>
                     <p className="text-xs font-bold leading-relaxed text-gray-600">
@@ -116,7 +120,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* 5. WEBSITE LINK FEATURE (BOTTOM CENTER - INCREASED VERTICAL GAP) */}
+                    {/* 5. WEBSITE LINK FEATURE (BOTTOM CENTER) */}
                     <div className="absolute left-[36%] top-[280px] w-[220px] -rotate-3 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
                         <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -143,7 +147,7 @@ export default function Dashboard() {
 
                     {/* --- COLUMN 3 (RIGHT) --- */}
 
-                    {/* 3. FORMULA CHEAT SHEET FEATURE (TOP RIGHT - PULLED CLOSER) */}
+                    {/* 3. FORMULA CHEAT SHEET FEATURE (TOP RIGHT) */}
                     <div className="absolute right-[10%] top-2 w-[220px] -rotate-2 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
                         <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -170,7 +174,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* 6. CREATE NEW RESOURCE CARD (BOTTOM RIGHT - PULLED CLOSER) */}
+                    {/* 6. CREATE NEW RESOURCE CARD (BOTTOM RIGHT) */}
                     <div className="absolute right-[10%] top-[280px] w-[210px] rotate-3 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
                         <div className="flex min-h-[220px] flex-col items-center justify-between rounded-2xl border-2 border-dashed border-black bg-[#2ED573]/15 p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="my-auto flex flex-col items-center">
@@ -185,21 +189,26 @@ export default function Dashboard() {
                                     first card.
                                 </p>
                             </div>
-                            <Link
-                                href={
-                                    route().has('resources.index')
-                                        ? route('resources.index')
-                                        : '#'
-                                }
-                                className="inline-flex w-full items-center justify-center gap-1 rounded-xl border-2 border-black bg-white py-1.5 text-[10px] font-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+
+                            {/* BUTTON THAT TRIGGERS POPUP */}
+                            <button
+                                type="button"
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="inline-flex w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-2 border-black bg-white py-1.5 text-[10px] font-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
                             >
                                 <span>Add Resource</span>
                                 <span>→</span>
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* RESOURCE CREATION MODAL */}
+            <CreateResourceModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+            />
         </AuthenticatedLayout>
     );
 }

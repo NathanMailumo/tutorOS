@@ -1,5 +1,7 @@
-import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import PrivateResource from '@/Components/PrivateResource';
+import PublicResource from '@/Components/PublicResource';
 
 export default function AuthenticatedLayout({
     children,
@@ -8,6 +10,33 @@ export default function AuthenticatedLayout({
 }) {
     const { url, props } = usePage();
     const user = props.auth?.user;
+
+    const [isPrivateResource, setIsPrivateResource] = useState(false);
+    const [isPublicResource, setIsPublicResource] = useState(false);
+    const { data, setData, post, processing, reset } = useForm({
+        name: '',
+        type: 'private',
+        invite_emails: '',
+    });
+
+    const closeResourceForm = () => {
+        setIsPrivateResource(false);
+        setIsPublicResource(false);
+        reset();
+    };
+
+    const openResourceForm = (type) => {
+        setData('type', type);
+        setIsPrivateResource(type === 'private');
+        setIsPublicResource(type === 'public');
+    };
+
+    const handleResourceSubmit = (event) => {
+        event.preventDefault();
+        post(route().has('resources.store') ? route('resources.store') : '#', {
+            onSuccess: closeResourceForm,
+        });
+    };
 
     return (
         <>
@@ -65,19 +94,14 @@ export default function AuthenticatedLayout({
                             Private Resource
                         </span>
 
-                        <Link
-                            href={
-                                route().has('resources.create')
-                                    ? route('resources.create', {
-                                          type: 'private',
-                                      })
-                                    : '#'
-                            }
+                        <button
+                            type="button"
+                            onClick={() => openResourceForm('private')}
                             className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
                             <span className="text-sm font-bold">+</span>
                             <span>Add new</span>
-                        </Link>
+                        </button>
 
                         {/* DYNAMIC PRIVATE RESOURCES LIST */}
                         {privateResources.length > 0 && (
@@ -117,19 +141,14 @@ export default function AuthenticatedLayout({
                             Public Resource
                         </span>
 
-                        <Link
-                            href={
-                                route().has('resources.create')
-                                    ? route('resources.create', {
-                                          type: 'public',
-                                      })
-                                    : '#'
-                            }
+                        <button
+                            type="button"
+                            onClick={() => openResourceForm('public')}
                             className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
                             <span className="text-sm font-bold">+</span>
                             <span>Add new</span>
-                        </Link>
+                        </button>
 
                         {/* DYNAMIC PUBLIC RESOURCES LIST */}
                         {publicResources.length > 0 && (
@@ -275,6 +294,45 @@ export default function AuthenticatedLayout({
                 </div>
             </aside>
             <main className="ml-64 min-h-screen">{children}</main>
+
+            {(isPrivateResource || isPublicResource) && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                    <div className="relative w-full max-w-md rounded-3xl border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="flex items-center justify-between border-b-2 border-black pb-3">
+                            <h2 className="text-lg font-black text-[#121212]">
+                                {isPrivateResource
+                                    ? 'Create Private Resource'
+                                    : 'Create Public Resource'}
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={closeResourceForm}
+                                className="flex h-7 w-7 items-center justify-center rounded-lg border-2 border-black bg-red-500 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600"
+                            >
+                                X
+                            </button>
+                        </div>
+
+                        {isPrivateResource ? (
+                            <PrivateResource
+                                data={data}
+                                setData={setData}
+                                onSubmit={handleResourceSubmit}
+                                onClose={closeResourceForm}
+                                processing={processing}
+                            />
+                        ) : (
+                            <PublicResource
+                                data={data}
+                                setData={setData}
+                                onSubmit={handleResourceSubmit}
+                                onClose={closeResourceForm}
+                                processing={processing}
+                            />
+                        )}
+                    </div>
+                </div>
+            )}
         </>
     );
 }
