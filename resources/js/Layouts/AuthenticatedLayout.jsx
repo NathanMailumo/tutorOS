@@ -1,124 +1,280 @@
+import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 
-export default function AuthenticatedLayout({ children }) {
-    const user = usePage().props.auth.user;
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-
-    // Navigation items configuration
-    const navItems = [
-        { name: 'Dashboard', route: 'dashboard' },
-        { name: 'Sessions', route: 'sessions.index' },
-        { name: 'Quiz Generator', route: 'quizzes.index' },
-        { name: 'Resources', route: 'resources.index' },
-    ];
+export default function AuthenticatedLayout({
+    children,
+    privateResources = [],
+    publicResources = [],
+}) {
+    const { url, props } = usePage();
+    const user = props.auth?.user;
 
     return (
-        <div className="min-h-screen bg-[#F5F5F0] font-sans text-[#121212] antialiased">
-            {/* MOBILE TOP BAR */}
-            <div className="flex items-center justify-between border-b-2 border-black bg-[#121212] px-4 py-3 text-white lg:hidden">
-                <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/20 bg-[#FF6B35] text-xs font-black">
-                        TOS
-                    </div>
-                    <span className="text-lg font-black">TutorOS</span>
-                </div>
-                <button
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="rounded-xl border-2 border-white bg-[#121212] px-3 py-1 text-sm font-black text-white active:bg-gray-800"
-                >
-                    {sidebarOpen ? 'Close' : 'Menu'}
-                </button>
-            </div>
-
-            <div className="flex">
-                {/* SIDEBAR NAVIGATION */}
-                <aside
-                    className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col justify-between border-r-2 border-black bg-[#121212] p-4 text-white transition-transform duration-200 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-                >
-                    <div className="space-y-6">
-                        {/* BRAND HEADER */}
-                        <div className="flex items-center gap-3 px-2 py-2">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-white bg-[#FF6B35] text-sm font-black text-white shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+        <>
+            <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 select-none flex-col justify-between border-r border-[#2f2f2f] bg-[#191919] p-3 text-sm font-medium text-[#9b9b9b]">
+                {/* TOP NAVIGATION & CONTENT AREA */}
+                <div className="custom-scrollbar flex-1 space-y-6 overflow-y-auto pr-1">
+                    {/* SIDEBAR HEADER / BRANDING */}
+                    <div className="border-b border-[#2f2f2f] px-3 py-4">
+                        <div className="inline-flex items-center gap-3 whitespace-nowrap">
+                            {/* RED TOS LOGO BADGE */}
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 border-black bg-red-600 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                 TOS
                             </div>
-                            <span className="text-xl font-black tracking-tight text-white">
+
+                            {/* INLINE TEXT */}
+                            <span className="text-lg font-black leading-none tracking-tight text-red-500">
                                 TutorOS
                             </span>
                         </div>
+                    </div>
+                    {/* 1. HOME LINK */}
+                    <div className="space-y-1">
+                        <Link
+                            href={
+                                route().has('dashboard')
+                                    ? route('dashboard')
+                                    : '#'
+                            }
+                            className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 transition-colors ${
+                                url === '/dashboard' || url === '/'
+                                    ? 'bg-[#2c2c2c] font-semibold text-white'
+                                    : 'hover:bg-[#252525] hover:text-gray-200'
+                            }`}
+                        >
+                            <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                />
+                            </svg>
+                            <span>Home</span>
+                        </Link>
+                    </div>
 
-                        {/* NAV LINKS */}
-                        <nav className="space-y-1.5">
-                            {navItems.map((item) => {
-                                const active =
-                                    route().current(item.route) ||
-                                    route().current(
-                                        `${item.route.split('.')[0]}.*`,
-                                    );
-                                return (
+                    {/* 2. PRIVATE RESOURCES SECTION */}
+                    <div className="space-y-1">
+                        <span className="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-[#5f5f5f]">
+                            Private Resource
+                        </span>
+
+                        <Link
+                            href={
+                                route().has('resources.create')
+                                    ? route('resources.create', {
+                                          type: 'private',
+                                      })
+                                    : '#'
+                            }
+                            className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
+                        >
+                            <span className="text-sm font-bold">+</span>
+                            <span>Add new</span>
+                        </Link>
+
+                        {/* DYNAMIC PRIVATE RESOURCES LIST */}
+                        {privateResources.length > 0 && (
+                            <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
+                                {privateResources.map((item) => (
                                     <Link
-                                        key={item.name}
+                                        key={item.id}
                                         href={
-                                            route().has(item.route)
-                                                ? route(item.route)
+                                            route().has('resources.show')
+                                                ? route(
+                                                      'resources.show',
+                                                      item.id,
+                                                  )
                                                 : '#'
                                         }
-                                        className={`flex items-center rounded-2xl px-4 py-3 text-sm font-black transition-all ${
-                                            active
-                                                ? 'border-2 border-black bg-[#FF6B35] text-white shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]'
-                                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                        className={`flex items-center gap-2 truncate rounded-md px-2 py-1 text-xs transition-colors ${
+                                            url.includes(
+                                                `/resources/${item.id}`,
+                                            )
+                                                ? 'bg-[#2c2c2c] text-white'
+                                                : 'hover:bg-[#252525] hover:text-gray-200'
                                         }`}
                                     >
-                                        <span>{item.name}</span>
+                                        <span className="text-[10px]">🔒</span>
+                                        <span className="truncate">
+                                            {item.title || item.name}
+                                        </span>
                                     </Link>
-                                );
-                            })}
-                        </nav>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
-                    {/* BOTTOM SECTION: SETTINGS, LOGOUT & USER PROFILE */}
-                    <div className="space-y-4 border-t border-white/10 pt-4">
-                        <div className="space-y-1">
-                            <button
-                                type="button"
-                                disabled
-                                className="flex w-full cursor-not-allowed items-center rounded-xl px-4 py-2 text-left text-xs font-bold text-gray-500"
-                            >
-                                <span>Settings</span>
-                            </button>
+                    {/* 3. PUBLIC RESOURCES SECTION */}
+                    <div className="space-y-1">
+                        <span className="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-[#5f5f5f]">
+                            Public Resource
+                        </span>
 
-                            <Link
-                                href={route('logout')}
-                                method="post"
-                                as="button"
-                                className="flex w-full items-center rounded-xl px-4 py-2 text-xs font-bold text-gray-400 hover:bg-white/5 hover:text-white"
-                            >
-                                <span>Logout</span>
-                            </Link>
-                        </div>
+                        <Link
+                            href={
+                                route().has('resources.create')
+                                    ? route('resources.create', {
+                                          type: 'public',
+                                      })
+                                    : '#'
+                            }
+                            className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
+                        >
+                            <span className="text-sm font-bold">+</span>
+                            <span>Add new</span>
+                        </Link>
 
-                        {/* USER AVATAR CARD */}
-                        <div className="flex items-center gap-3 rounded-2xl border-2 border-white/20 bg-white/5 p-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-white bg-[#5352ED] font-black uppercase text-white shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
-                                {user?.name ? user.name.charAt(0) : 'U'}
+                        {/* DYNAMIC PUBLIC RESOURCES LIST */}
+                        {publicResources.length > 0 && (
+                            <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
+                                {publicResources.map((item) => (
+                                    <Link
+                                        key={item.id}
+                                        href={
+                                            route().has('resources.show')
+                                                ? route(
+                                                      'resources.show',
+                                                      item.id,
+                                                  )
+                                                : '#'
+                                        }
+                                        className={`flex items-center gap-2 truncate rounded-md px-2 py-1 text-xs transition-colors ${
+                                            url.includes(
+                                                `/resources/${item.id}`,
+                                            )
+                                                ? 'bg-[#2c2c2c] text-white'
+                                                : 'hover:bg-[#252525] hover:text-gray-200'
+                                        }`}
+                                    >
+                                        <span className="text-[10px]">🌐</span>
+                                        <span className="truncate">
+                                            {item.title || item.name}
+                                        </span>
+                                    </Link>
+                                ))}
                             </div>
-                            <div className="truncate">
-                                <div className="truncate text-xs font-black text-white">
-                                    {user?.name || 'User'}
-                                </div>
-                                <div className="truncate text-[10px] font-medium text-gray-400">
-                                    {user?.email || ''}
-                                </div>
-                            </div>
-                        </div>
+                        )}
                     </div>
-                </aside>
 
-                {/* MAIN CONTENT AREA */}
-                <main className="min-h-screen flex-1 overflow-y-auto">
-                    {children}
-                </main>
-            </div>
-        </div>
+                    {/* 4. SESSION SECTION */}
+                    <div className="space-y-1">
+                        <Link
+                            href={
+                                route().has('sessions.index')
+                                    ? route('sessions.index')
+                                    : '#'
+                            }
+                            className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 transition-colors ${
+                                url.startsWith('/session')
+                                    ? 'bg-[#2c2c2c] font-semibold text-white'
+                                    : 'hover:bg-[#252525] hover:text-gray-200'
+                            }`}
+                        >
+                            <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                />
+                            </svg>
+                            <span>Session</span>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* BOTTOM SECTION: SETTINGS, PROFILE & LOGOUT */}
+                <div className="space-y-1 border-t border-[#2f2f2f] pt-3">
+                    {/* SETTINGS LINK */}
+                    <Link
+                        href={route().has('settings') ? route('settings') : '#'}
+                        className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 transition-colors ${
+                            url === '/settings'
+                                ? 'bg-[#2c2c2c] text-white'
+                                : 'hover:bg-[#252525] hover:text-gray-200'
+                        }`}
+                    >
+                        <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                            />
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                        </svg>
+                        <span>Settings</span>
+                    </Link>
+
+                    {/* PROFILE & LOGOUT ROW */}
+                    <div className="flex items-center justify-between gap-1 pt-1">
+                        {/* PROFILE LINK */}
+                        <Link
+                            href={
+                                route().has('profile.edit')
+                                    ? route('profile.edit')
+                                    : '#'
+                            }
+                            className="flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-[#252525] hover:text-gray-200"
+                        >
+                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-purple-600 text-[10px] font-bold text-white">
+                                {user?.name
+                                    ? user.name.charAt(0).toUpperCase()
+                                    : 'U'}
+                            </div>
+                            <span className="truncate text-xs text-gray-300">
+                                {user?.name || 'Profile'}
+                            </span>
+                        </Link>
+
+                        {/* LOGOUT BUTTON */}
+                        <Link
+                            method="post"
+                            href={route().has('logout') ? route('logout') : '#'}
+                            as="button"
+                            className="shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-[#252525] hover:text-red-400"
+                            title="Log Out"
+                        >
+                            <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                />
+                            </svg>
+                        </Link>
+                    </div>
+                </div>
+            </aside>
+            <main className="ml-64 min-h-screen">{children}</main>
+        </>
     );
 }
