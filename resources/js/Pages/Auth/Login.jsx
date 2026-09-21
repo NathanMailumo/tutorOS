@@ -22,10 +22,10 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Sign In" />
 
-            <div className="flex min-h-[80vh] items-center justify-center px-4 py-8">
-                <div className="w-full max-w-md rounded-3xl border-2 border-black bg-white p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:p-10">
+            <div className="flex min-h-[80vh] items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
+                <div className="w-full max-w-md rounded-2xl sm:rounded-3xl border-2 border-black bg-white p-6 sm:p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:p-10">
                     {/* Header Logo */}
-                    <div className="mb-8 flex items-center gap-3">
+                    <div className="mb-6 sm:mb-8 flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-[#FF6B35] text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                             🎓
                         </div>
@@ -35,10 +35,10 @@ export default function Login({ status, canResetPassword }) {
                     </div>
 
                     {/* Form Titles */}
-                    <h1 className="text-3xl font-black tracking-tight text-[#121212]">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#121212]">
                         Welcome back.
                     </h1>
-                    <p className="mb-8 mt-1 text-sm font-medium text-gray-500">
+                    <p className="mb-6 sm:mb-8 mt-1 text-xs sm:text-sm font-medium text-gray-500">
                         Sign in to continue to your dashboard.
                     </p>
 

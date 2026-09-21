@@ -12,7 +12,7 @@ export default function Dashboard() {
 
             {/* FULL SCREEN CANVAS WORKSPACE */}
             <div
-                className="relative flex min-h-[calc(100vh-65px)] w-full flex-col justify-between overflow-y-auto p-6 lg:p-12"
+                className="relative flex min-h-[calc(100vh-56px)] md:min-h-screen w-full flex-col justify-start overflow-y-auto p-4 sm:p-6 lg:p-10"
                 style={{
                     backgroundImage:
                         'radial-gradient(#d1d5db 1.5px, transparent 1.5px)',
@@ -20,9 +20,9 @@ export default function Dashboard() {
                 }}
             >
                 {/* DASHBOARD HEADER */}
-                <div className="z-10 max-w-2xl space-y-2 pb-2 pt-2">
-                    <h1 className="flex items-center gap-2 text-3xl font-black tracking-tight text-[#121212] md:text-4xl">
-                        Welcome to <span className="text-red-600">TutorOS</span>{' '}
+                <div className="z-10 max-w-2xl space-y-2 pb-2 pt-1 sm:pt-2">
+                    <h1 className="flex flex-wrap items-center gap-2 text-2xl font-black tracking-tight text-[#121212] sm:text-3xl md:text-4xl">
+                        <span>Welcome to</span> <span className="text-red-600">TutorOS</span>{' '}
                         <span className="inline-block animate-bounce">👋</span>
                     </h1>
                     <p className="text-xs font-bold leading-relaxed text-gray-600">
@@ -32,13 +32,11 @@ export default function Dashboard() {
                     </p>
                 </div>
 
-                {/* BALANCED SPACED-OUT CANVAS */}
-                <div className="relative my-4 min-h-[620px] w-full flex-1">
-                    {/* --- COLUMN 1 (LEFT) --- */}
-
-                    {/* 1. YOUTUBE CARD FEATURE (TOP LEFT) */}
-                    <div className="absolute left-[3%] top-2 w-[220px] -rotate-3 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
-                        <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                {/* RESPONSIVE NEO-BRUTALIST CANVAS GRID */}
+                <div className="my-6 grid w-full max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {/* 1. YOUTUBE CARD FEATURE */}
+                    <div className="w-full transition-all sm:-rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="relative flex h-24 w-full flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-black bg-slate-900 p-2 text-center">
                                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-black bg-red-600 text-xs font-black text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
@@ -63,9 +61,61 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* 4. REVISION PACKS FEATURE (BOTTOM LEFT) */}
-                    <div className="absolute left-[3%] top-[280px] w-[220px] rotate-2 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
-                        <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-[#8A2BE2] p-4 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    {/* 2. STICKY NOTE FEATURE */}
+                    <div className="w-full transition-all sm:rotate-1 hover:rotate-0 hover:scale-[1.02]">
+                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-[#FEF08A] p-4 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <div>
+                                <div className="flex items-center justify-between border-b border-black/10 pb-1.5">
+                                    <span className="text-[9px] font-black uppercase text-black/60">
+                                        Sticky Note
+                                    </span>
+                                    <span className="text-[10px]">📌</span>
+                                </div>
+                                <h3 className="mt-2 text-xs font-black text-black">
+                                    Course Quick Notes
+                                </h3>
+                                <p className="mt-1.5 text-[10px] font-bold leading-tight text-black/80">
+                                    Jot down sticky notes for quick reminders,
+                                    key concepts, or homework tasks relevant to
+                                    your course.
+                                </p>
+                            </div>
+                            <div className="mt-3 text-[9px] font-bold text-black/50">
+                                Click to edit note...
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 3. FORMULA CHEAT SHEET FEATURE */}
+                    <div className="w-full transition-all sm:-rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <div>
+                                <div className="flex items-center justify-between border-b border-gray-100 pb-1">
+                                    <span className="text-[9px] font-black uppercase text-blue-600">
+                                        Cheat Sheet
+                                    </span>
+                                    <span className="rounded border border-black/20 bg-blue-100 px-1.5 py-0.5 text-[9px] font-black text-blue-800">
+                                        Math / Sci
+                                    </span>
+                                </div>
+                                <h3 className="mt-2 text-xs font-black text-[#121212]">
+                                    Formula Cheat Sheet
+                                </h3>
+                                <p className="mb-2 mt-1 text-[10px] font-medium text-gray-500">
+                                    Store essential formulas in one place:
+                                </p>
+                                <div className="space-y-1 rounded-lg border border-black/10 bg-gray-50 p-2 font-mono text-[10px] font-bold text-gray-700">
+                                    <div>• E = mc²</div>
+                                    <div>• A = πr²</div>
+                                    <div>• a² + b² = c²</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 4. REVISION PACKS FEATURE */}
+                    <div className="w-full transition-all sm:rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-[#8A2BE2] p-4 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex items-center justify-between">
                                     <span className="rounded-md border border-black bg-white px-1.5 py-0.5 text-[8px] font-black uppercase text-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
@@ -93,36 +143,9 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* --- COLUMN 2 (CENTER) --- */}
-
-                    {/* 2. STICKY NOTE FEATURE (TOP CENTER) */}
-                    <div className="rotate-4 absolute left-[36%] top-2 w-[210px] transition-all hover:z-30 hover:rotate-0 hover:scale-105">
-                        <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-[#FEF08A] p-4 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                            <div>
-                                <div className="flex items-center justify-between border-b border-black/10 pb-1.5">
-                                    <span className="text-[9px] font-black uppercase text-black/60">
-                                        Sticky Note
-                                    </span>
-                                    <span className="text-[10px]">📌</span>
-                                </div>
-                                <h3 className="mt-2 text-xs font-black text-black">
-                                    Course Quick Notes
-                                </h3>
-                                <p className="mt-1.5 text-[10px] font-bold leading-tight text-black/80">
-                                    Jot down sticky notes for quick reminders,
-                                    key concepts, or homework tasks relevant to
-                                    your course.
-                                </p>
-                            </div>
-                            <div className="mt-3 text-[9px] font-bold text-black/50">
-                                Click to edit note...
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 5. WEBSITE LINK FEATURE (BOTTOM CENTER) */}
-                    <div className="absolute left-[36%] top-[280px] w-[220px] -rotate-3 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
-                        <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    {/* 5. WEBSITE LINK FEATURE */}
+                    <div className="w-full transition-all sm:-rotate-1 hover:rotate-0 hover:scale-[1.02]">
+                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex h-14 w-full items-center justify-between rounded-xl border-2 border-black bg-sky-500 p-2.5 text-white">
                                     <div className="truncate text-xs font-black">
@@ -145,38 +168,9 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* --- COLUMN 3 (RIGHT) --- */}
-
-                    {/* 3. FORMULA CHEAT SHEET FEATURE (TOP RIGHT) */}
-                    <div className="absolute right-[10%] top-2 w-[220px] -rotate-2 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
-                        <div className="flex min-h-[220px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                            <div>
-                                <div className="flex items-center justify-between border-b border-gray-100 pb-1">
-                                    <span className="text-[9px] font-black uppercase text-blue-600">
-                                        Cheat Sheet
-                                    </span>
-                                    <span className="rounded border border-black/20 bg-blue-100 px-1.5 py-0.5 text-[9px] font-black text-blue-800">
-                                        Math / Sci
-                                    </span>
-                                </div>
-                                <h3 className="mt-2 text-xs font-black text-[#121212]">
-                                    Formula Cheat Sheet
-                                </h3>
-                                <p className="mb-2 mt-1 text-[10px] font-medium text-gray-500">
-                                    Store essential formulas in one place:
-                                </p>
-                                <div className="space-y-1 rounded-lg border border-black/10 bg-gray-50 p-2 font-mono text-[10px] font-bold text-gray-700">
-                                    <div>• E = mc²</div>
-                                    <div>• A = πr²</div>
-                                    <div>• a² + b² = c²</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* 6. CREATE NEW RESOURCE CARD (BOTTOM RIGHT) */}
-                    <div className="absolute right-[10%] top-[280px] w-[210px] rotate-3 transition-all hover:z-30 hover:rotate-0 hover:scale-105">
-                        <div className="flex min-h-[220px] flex-col items-center justify-between rounded-2xl border-2 border-dashed border-black bg-[#2ED573]/15 p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    {/* 6. CREATE NEW RESOURCE CARD */}
+                    <div className="w-full transition-all sm:rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                        <div className="flex min-h-[230px] flex-col items-center justify-between rounded-2xl border-2 border-dashed border-black bg-[#2ED573]/15 p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="my-auto flex flex-col items-center">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-[#2ED573] text-lg font-black text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)]">
                                     +
@@ -184,7 +178,7 @@ export default function Dashboard() {
                                 <h3 className="mt-3 text-xs font-black text-[#121212]">
                                     Create New Resource
                                 </h3>
-                                <p className="mt-1 max-w-[130px] text-[9px] font-bold text-gray-600">
+                                <p className="mt-1 max-w-[140px] text-[10px] font-bold text-gray-600">
                                     Start building your workspace by adding your
                                     first card.
                                 </p>
@@ -194,7 +188,7 @@ export default function Dashboard() {
                             <button
                                 type="button"
                                 onClick={() => setIsCreateModalOpen(true)}
-                                className="inline-flex w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-2 border-black bg-white py-1.5 text-[10px] font-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+                                className="inline-flex w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-2 border-black bg-white py-2 text-xs font-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                             >
                                 <span>Add Resource</span>
                                 <span>→</span>

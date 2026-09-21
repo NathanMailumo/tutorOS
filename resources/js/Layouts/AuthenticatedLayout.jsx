@@ -13,9 +13,10 @@ export default function AuthenticatedLayout({
 
     const [isPrivateResource, setIsPrivateResource] = useState(false);
     const [isPublicResource, setIsPublicResource] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { data, setData, post, processing, reset } = useForm({
-        name: '',
-        type: 'private',
+        course_name: '',
+        resource_type: '',
         invite_emails: '',
     });
 
@@ -26,7 +27,7 @@ export default function AuthenticatedLayout({
     };
 
     const openResourceForm = (type) => {
-        setData('type', type);
+        setData('resource_type', resource_type);
         setIsPrivateResource(type === 'private');
         setIsPublicResource(type === 'public');
     };
@@ -40,11 +41,69 @@ export default function AuthenticatedLayout({
 
     return (
         <>
-            <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 select-none flex-col justify-between border-r border-[#2f2f2f] bg-[#191919] p-3 text-sm font-medium text-[#9b9b9b]">
+            {/* MOBILE TOP NAVBAR */}
+            <header className="fixed left-0 right-0 top-0 z-30 flex h-14 items-center justify-between border-b border-[#2f2f2f] bg-[#191919] px-4 text-white md:hidden">
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#3a3a3a] bg-[#222222] text-gray-300 transition-colors hover:bg-[#2c2c2c] hover:text-white"
+                        aria-label="Toggle Navigation Menu"
+                    >
+                        {isMobileMenuOpen ? (
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        ) : (
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        )}
+                    </button>
+
+                    <Link
+                        href={route().has('dashboard') ? route('dashboard') : '#'}
+                        className="inline-flex items-center gap-2"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 border-black bg-red-600 text-[10px] font-black text-white shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)]">
+                            TOS
+                        </div>
+                        <span className="text-base font-black tracking-tight text-red-500">
+                            TutorOS
+                        </span>
+                    </Link>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <Link
+                        href={route().has('profile.edit') ? route('profile.edit') : '#'}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-600 text-xs font-bold text-white shadow-sm"
+                        title={user?.name || 'Profile'}
+                    >
+                        {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </Link>
+                </div>
+            </header>
+
+            {/* MOBILE BACKDROP OVERLAY */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity md:hidden"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+
+            <aside
+                className={`fixed left-0 top-0 z-50 flex h-screen w-64 max-w-[80vw] select-none flex-col justify-between border-r border-[#2f2f2f] bg-[#191919] p-3 text-sm font-medium text-[#9b9b9b] transition-transform duration-300 ease-in-out md:translate-x-0 ${
+                    isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
+                }`}
+            >
                 {/* TOP NAVIGATION & CONTENT AREA */}
                 <div className="custom-scrollbar flex-1 space-y-6 overflow-y-auto pr-1">
                     {/* SIDEBAR HEADER / BRANDING */}
-                    <div className="border-b border-[#2f2f2f] px-3 py-4">
+                    <div className="flex items-center justify-between border-b border-[#2f2f2f] px-3 py-4">
                         <div className="inline-flex items-center gap-3 whitespace-nowrap">
                             {/* RED TOS LOGO BADGE */}
                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 border-black bg-red-600 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -56,10 +115,21 @@ export default function AuthenticatedLayout({
                                 TutorOS
                             </span>
                         </div>
+
+                        {/* MOBILE CLOSE BUTTON */}
+                        <button
+                            type="button"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#3a3a3a] bg-[#252525] text-xs font-bold text-gray-400 hover:text-white md:hidden"
+                            aria-label="Close menu"
+                        >
+                            ✕
+                        </button>
                     </div>
                     {/* 1. HOME LINK */}
                     <div className="space-y-1">
                         <Link
+                            onClick={() => setIsMobileMenuOpen(false)}
                             href={
                                 route().has('dashboard')
                                     ? route('dashboard')
@@ -109,6 +179,7 @@ export default function AuthenticatedLayout({
                                 {privateResources.map((item) => (
                                     <Link
                                         key={item.id}
+                                        onClick={() => setIsMobileMenuOpen(false)}
                                         href={
                                             route().has('resources.show')
                                                 ? route(
@@ -156,6 +227,7 @@ export default function AuthenticatedLayout({
                                 {publicResources.map((item) => (
                                     <Link
                                         key={item.id}
+                                        onClick={() => setIsMobileMenuOpen(false)}
                                         href={
                                             route().has('resources.show')
                                                 ? route(
@@ -185,6 +257,7 @@ export default function AuthenticatedLayout({
                     {/* 4. SESSION SECTION */}
                     <div className="space-y-1">
                         <Link
+                            onClick={() => setIsMobileMenuOpen(false)}
                             href={
                                 route().has('sessions.index')
                                     ? route('sessions.index')
@@ -218,6 +291,7 @@ export default function AuthenticatedLayout({
                 <div className="space-y-1 border-t border-[#2f2f2f] pt-3">
                     {/* SETTINGS LINK */}
                     <Link
+                        onClick={() => setIsMobileMenuOpen(false)}
                         href={route().has('settings') ? route('settings') : '#'}
                         className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 transition-colors ${
                             url === '/settings'
@@ -251,6 +325,7 @@ export default function AuthenticatedLayout({
                     <div className="flex items-center justify-between gap-1 pt-1">
                         {/* PROFILE LINK */}
                         <Link
+                            onClick={() => setIsMobileMenuOpen(false)}
                             href={
                                 route().has('profile.edit')
                                     ? route('profile.edit')
@@ -293,13 +368,13 @@ export default function AuthenticatedLayout({
                     </div>
                 </div>
             </aside>
-            <main className="ml-64 min-h-screen">{children}</main>
+            <main className="ml-0 min-h-screen w-full overflow-x-hidden pt-14 md:ml-64 md:pt-0">{children}</main>
 
             {(isPrivateResource || isPublicResource) && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-                    <div className="relative w-full max-w-md rounded-3xl border-2 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
+                    <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl sm:rounded-3xl border-2 border-black bg-white p-5 sm:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         <div className="flex items-center justify-between border-b-2 border-black pb-3">
-                            <h2 className="text-lg font-black text-[#121212]">
+                            <h2 className="text-base sm:text-lg font-black text-[#121212]">
                                 {isPrivateResource
                                     ? 'Create Private Resource'
                                     : 'Create Public Resource'}
@@ -309,7 +384,7 @@ export default function AuthenticatedLayout({
                                 onClick={closeResourceForm}
                                 className="flex h-7 w-7 items-center justify-center rounded-lg border-2 border-black bg-red-500 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600"
                             >
-                                X
+                                ✕
                             </button>
                         </div>
 
