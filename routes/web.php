@@ -34,6 +34,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/resources', [ResourceController::class, 'createResource'])
         ->middleware('verified')
         ->name('resources.store');
+    Route::get('/resources/private/{resource}', [ResourceController::class, 'privateResource'])
+        ->middleware('verified')
+        ->name('resources.private');
+    Route::get('/resources/public/{resource}', [ResourceController::class, 'publicResource'])
+        ->middleware('verified')
+        ->name('resources.public');
+    Route::get('/resources/{resource}', [ResourceController::class, 'showResource'])
+        ->middleware('verified')
+        ->name('resources.show');
 });
 
 require __DIR__.'/auth.php';

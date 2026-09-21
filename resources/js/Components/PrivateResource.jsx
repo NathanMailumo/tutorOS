@@ -1,26 +1,43 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 
-export default function PrivateResourceForm({ onClose, onSuccess }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+export default function PrivateResourceForm({
+    data: externalData,
+    setData: externalSetData,
+    onSubmit: externalOnSubmit,
+    onClose,
+    onSuccess,
+    processing: externalProcessing,
+    errors: externalErrors,
+}) {
+    const localForm = useForm({
         course_name: '',
         resource_type: 'private',
     });
 
-    const submit = (e) => {
-        e.preventDefault();
+    const isControlled = Boolean(externalData && externalSetData && externalOnSubmit);
+    const data = isControlled ? externalData : localForm.data;
+    const setData = isControlled ? externalSetData : localForm.setData;
+    const processing = isControlled ? (externalProcessing ?? false) : localForm.processing;
+    const errors = isControlled ? (externalErrors ?? {}) : localForm.errors;
 
-        post(route('resources.store'), {
-            onSuccess: () => {
-                reset();
-                if (onSuccess) onSuccess();
-                if (onClose) onClose();
-            },
-        });
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (isControlled) {
+            externalOnSubmit(e);
+        } else {
+            localForm.post(route('resources.store'), {
+                onSuccess: () => {
+                    localForm.reset();
+                    if (onSuccess) onSuccess();
+                    if (onClose) onClose();
+                },
+            });
+        }
     };
 
     return (
-        <form onSubmit={submit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
             <div>
                 <label className="mb-1.5 block text-xs font-black uppercase text-[#121212]">
                     Course / Space Name <span className="text-red-600">*</span>
@@ -28,7 +45,7 @@ export default function PrivateResourceForm({ onClose, onSuccess }) {
                 <input
                     type="text"
                     required
-                    value={data.course_name}
+                    value={data.course_name || ''}
                     onChange={(e) => setData('course_name', e.target.value)}
                     placeholder="e.g. CSC 205 - Data Structures"
                     className="w-full rounded-xl border-2 border-black bg-gray-50 px-3.5 py-2.5 text-xs font-bold text-[#121212] placeholder-gray-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:outline-none focus:ring-0"

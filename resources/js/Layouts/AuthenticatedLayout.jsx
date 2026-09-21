@@ -5,16 +5,25 @@ import PublicResource from '@/Components/PublicResource';
 
 export default function AuthenticatedLayout({
     children,
-    privateResources = [],
-    publicResources = [],
+    privateResources,
+    publicResources,
 }) {
     const { url, props } = usePage();
     const user = props.auth?.user;
 
+    const userPrivateResources =
+        privateResources && privateResources.length > 0
+            ? privateResources
+            : props.privateResources || [];
+    const userPublicResources =
+        publicResources && publicResources.length > 0
+            ? publicResources
+            : props.publicResources || [];
+
     const [isPrivateResource, setIsPrivateResource] = useState(false);
     const [isPublicResource, setIsPublicResource] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { data, setData, post, processing, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         course_name: '',
         resource_type: '',
         invite_emails: '',
@@ -27,7 +36,7 @@ export default function AuthenticatedLayout({
     };
 
     const openResourceForm = (type) => {
-        setData('resource_type', resource_type);
+        setData('resource_type', type);
         setIsPrivateResource(type === 'private');
         setIsPublicResource(type === 'public');
     };
@@ -51,18 +60,40 @@ export default function AuthenticatedLayout({
                         aria-label="Toggle Navigation Menu"
                     >
                         {isMobileMenuOpen ? (
-                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            <svg
+                                className="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
                         ) : (
-                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <svg
+                                className="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
                             </svg>
                         )}
                     </button>
 
                     <Link
-                        href={route().has('dashboard') ? route('dashboard') : '#'}
+                        href={
+                            route().has('dashboard') ? route('dashboard') : '#'
+                        }
                         className="inline-flex items-center gap-2"
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -77,7 +108,11 @@ export default function AuthenticatedLayout({
 
                 <div className="flex items-center gap-2">
                     <Link
-                        href={route().has('profile.edit') ? route('profile.edit') : '#'}
+                        href={
+                            route().has('profile.edit')
+                                ? route('profile.edit')
+                                : '#'
+                        }
                         className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-600 text-xs font-bold text-white shadow-sm"
                         title={user?.name || 'Profile'}
                     >
@@ -97,7 +132,9 @@ export default function AuthenticatedLayout({
 
             <aside
                 className={`fixed left-0 top-0 z-50 flex h-screen w-64 max-w-[80vw] select-none flex-col justify-between border-r border-[#2f2f2f] bg-[#191919] p-3 text-sm font-medium text-[#9b9b9b] transition-transform duration-300 ease-in-out md:translate-x-0 ${
-                    isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
+                    isMobileMenuOpen
+                        ? 'translate-x-0 shadow-2xl'
+                        : '-translate-x-full'
                 }`}
             >
                 {/* TOP NAVIGATION & CONTENT AREA */}
@@ -174,31 +211,40 @@ export default function AuthenticatedLayout({
                         </button>
 
                         {/* DYNAMIC PRIVATE RESOURCES LIST */}
-                        {privateResources.length > 0 && (
+                        {userPrivateResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
-                                {privateResources.map((item) => (
+                                {userPrivateResources.map((item) => (
                                     <Link
                                         key={item.id}
-                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        onClick={() =>
+                                            setIsMobileMenuOpen(false)
+                                        }
                                         href={
-                                            route().has('resources.show')
+                                            route().has('resources.private')
                                                 ? route(
-                                                      'resources.show',
+                                                      'resources.private',
                                                       item.id,
                                                   )
-                                                : '#'
+                                                : route().has('resources.show')
+                                                  ? route(
+                                                        'resources.show',
+                                                        item.id,
+                                                    )
+                                                  : '#'
                                         }
                                         className={`flex items-center gap-2 truncate rounded-md px-2 py-1 text-xs transition-colors ${
-                                            url.includes(
-                                                `/resources/${item.id}`,
-                                            )
-                                                ? 'bg-[#2c2c2c] text-white'
+                                            url ===
+                                                `/resources/private/${item.id}` ||
+                                            url === `/resources/${item.id}`
+                                                ? 'bg-[#2c2c2c] font-semibold text-white'
                                                 : 'hover:bg-[#252525] hover:text-gray-200'
                                         }`}
                                     >
                                         <span className="text-[10px]">🔒</span>
                                         <span className="truncate">
-                                            {item.title || item.name}
+                                            {item.course_name ||
+                                                item.name ||
+                                                item.title}
                                         </span>
                                     </Link>
                                 ))}
@@ -222,31 +268,40 @@ export default function AuthenticatedLayout({
                         </button>
 
                         {/* DYNAMIC PUBLIC RESOURCES LIST */}
-                        {publicResources.length > 0 && (
+                        {userPublicResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
-                                {publicResources.map((item) => (
+                                {userPublicResources.map((item) => (
                                     <Link
                                         key={item.id}
-                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        onClick={() =>
+                                            setIsMobileMenuOpen(false)
+                                        }
                                         href={
-                                            route().has('resources.show')
+                                            route().has('resources.public')
                                                 ? route(
-                                                      'resources.show',
+                                                      'resources.public',
                                                       item.id,
                                                   )
-                                                : '#'
+                                                : route().has('resources.show')
+                                                  ? route(
+                                                        'resources.show',
+                                                        item.id,
+                                                    )
+                                                  : '#'
                                         }
                                         className={`flex items-center gap-2 truncate rounded-md px-2 py-1 text-xs transition-colors ${
-                                            url.includes(
-                                                `/resources/${item.id}`,
-                                            )
-                                                ? 'bg-[#2c2c2c] text-white'
+                                            url ===
+                                                `/resources/public/${item.id}` ||
+                                            url === `/resources/${item.id}`
+                                                ? 'bg-[#2c2c2c] font-semibold text-white'
                                                 : 'hover:bg-[#252525] hover:text-gray-200'
                                         }`}
                                     >
                                         <span className="text-[10px]">🌐</span>
                                         <span className="truncate">
-                                            {item.title || item.name}
+                                            {item.course_name ||
+                                                item.name ||
+                                                item.title}
                                         </span>
                                     </Link>
                                 ))}
@@ -368,13 +423,15 @@ export default function AuthenticatedLayout({
                     </div>
                 </div>
             </aside>
-            <main className="ml-0 min-h-screen w-full overflow-x-hidden pt-14 md:ml-64 md:pt-0">{children}</main>
+            <main className="ml-0 min-h-screen w-full overflow-x-hidden pt-14 md:ml-64 md:pt-0">
+                {children}
+            </main>
 
             {(isPrivateResource || isPublicResource) && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
-                    <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl sm:rounded-3xl border-2 border-black bg-white p-5 sm:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-4">
+                    <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-black bg-white p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:p-6 sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         <div className="flex items-center justify-between border-b-2 border-black pb-3">
-                            <h2 className="text-base sm:text-lg font-black text-[#121212]">
+                            <h2 className="text-base font-black text-[#121212] sm:text-lg">
                                 {isPrivateResource
                                     ? 'Create Private Resource'
                                     : 'Create Public Resource'}
@@ -395,6 +452,7 @@ export default function AuthenticatedLayout({
                                 onSubmit={handleResourceSubmit}
                                 onClose={closeResourceForm}
                                 processing={processing}
+                                errors={errors}
                             />
                         ) : (
                             <PublicResource
@@ -403,6 +461,7 @@ export default function AuthenticatedLayout({
                                 onSubmit={handleResourceSubmit}
                                 onClose={closeResourceForm}
                                 processing={processing}
+                                errors={errors}
                             />
                         )}
                     </div>

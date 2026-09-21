@@ -6,9 +6,9 @@ import PublicResource from './PublicResource';
 export default function CreateResourceModal({ isOpen, onClose }) {
     const [activeTab, setActiveTab] = useState('private'); // 'private' | 'public'
 
-    const { data, setData, post, processing, reset } = useForm({
-        name: '',
-        type: 'private',
+    const { data, setData, post, processing, errors, reset } = useForm({
+        course_name: '',
+        resource_type: 'private',
         invite_emails: '',
     });
 
@@ -16,12 +16,17 @@ export default function CreateResourceModal({ isOpen, onClose }) {
 
     const handleTabSwitch = (type) => {
         setActiveTab(type);
-        setData('type', type);
+        setData('resource_type', type);
+    };
+
+    const handleClose = () => {
+        reset();
+        onClose();
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route().has('resources.store') ? route('resources.store') : '#', {
+        post(route('resources.store'), {
             onSuccess: () => {
                 reset();
                 onClose();
@@ -39,7 +44,7 @@ export default function CreateResourceModal({ isOpen, onClose }) {
                         <span>Create Resource Space</span>
                     </h2>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="flex h-7 w-7 items-center justify-center rounded-lg border-2 border-black bg-red-500 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600"
                     >
                         ✕
@@ -78,16 +83,18 @@ export default function CreateResourceModal({ isOpen, onClose }) {
                         data={data}
                         setData={setData}
                         onSubmit={handleSubmit}
-                        onClose={onClose}
+                        onClose={handleClose}
                         processing={processing}
+                        errors={errors}
                     />
                 ) : (
                     <PublicResource
                         data={data}
                         setData={setData}
                         onSubmit={handleSubmit}
-                        onClose={onClose}
+                        onClose={handleClose}
                         processing={processing}
+                        errors={errors}
                     />
                 )}
             </div>
