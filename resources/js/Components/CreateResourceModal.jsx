@@ -35,12 +35,12 @@ export default function CreateResourceModal({ isOpen, onClose }) {
     };
 
     return (
-        <div className="animate-fadeIn fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
+        <div className="animate-fadeIn fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-4">
             {/* MODAL CARD */}
-            <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl sm:rounded-3xl border-2 border-black bg-white p-5 sm:p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-black bg-white p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:p-6 sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                 {/* HEADER & CLOSE BUTTON */}
                 <div className="flex items-center justify-between border-b-2 border-black pb-3">
-                    <h2 className="flex items-center gap-2 text-base sm:text-lg font-black text-[#121212]">
+                    <h2 className="flex items-center gap-2 text-base font-black text-[#121212] sm:text-lg">
                         <span>Create Resource Space</span>
                     </h2>
                     <button
@@ -52,11 +52,11 @@ export default function CreateResourceModal({ isOpen, onClose }) {
                 </div>
 
                 {/* TYPE SELECTOR TABS */}
-                <div className="mt-4 flex gap-1.5 sm:gap-2 rounded-2xl border-2 border-black bg-gray-100 p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <div className="mt-4 flex gap-1.5 rounded-2xl border-2 border-black bg-gray-100 p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:gap-2">
                     <button
                         type="button"
                         onClick={() => handleTabSwitch('private')}
-                        className={`flex-1 rounded-xl border-2 py-2 px-1 text-[11px] sm:text-xs font-black transition-all ${
+                        className={`flex-1 rounded-xl border-2 px-1 py-2 text-[11px] font-black transition-all sm:text-xs ${
                             activeTab === 'private'
                                 ? 'border-black bg-white text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                                 : 'border-transparent text-gray-500 hover:text-black'
@@ -67,7 +67,7 @@ export default function CreateResourceModal({ isOpen, onClose }) {
                     <button
                         type="button"
                         onClick={() => handleTabSwitch('public')}
-                        className={`flex-1 rounded-xl border-2 py-2 px-1 text-[11px] sm:text-xs font-black transition-all ${
+                        className={`flex-1 rounded-xl border-2 px-1 py-2 text-[11px] font-black transition-all sm:text-xs ${
                             activeTab === 'public'
                                 ? 'border-black bg-[#2ED573] text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                                 : 'border-transparent text-gray-500 hover:text-black'

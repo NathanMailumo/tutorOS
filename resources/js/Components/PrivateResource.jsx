@@ -15,10 +15,14 @@ export default function PrivateResourceForm({
         resource_type: 'private',
     });
 
-    const isControlled = Boolean(externalData && externalSetData && externalOnSubmit);
+    const isControlled = Boolean(
+        externalData && externalSetData && externalOnSubmit,
+    );
     const data = isControlled ? externalData : localForm.data;
     const setData = isControlled ? externalSetData : localForm.setData;
-    const processing = isControlled ? (externalProcessing ?? false) : localForm.processing;
+    const processing = isControlled
+        ? (externalProcessing ?? false)
+        : localForm.processing;
     const errors = isControlled ? (externalErrors ?? {}) : localForm.errors;
 
     const handleSubmit = (e) => {
@@ -61,18 +65,18 @@ export default function PrivateResourceForm({
                 🔒 Private spaces are only visible to you.
             </p>
 
-            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-2.5 border-t-2 border-black/10 pt-3">
+            <div className="flex flex-col-reverse items-stretch justify-end gap-2 border-t-2 border-black/10 pt-3 sm:flex-row sm:items-center sm:gap-2.5">
                 <button
                     type="button"
                     onClick={onClose}
-                    className="w-full sm:w-auto text-center rounded-xl border-2 border-black bg-white px-4 py-2.5 sm:py-2 text-xs font-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-100 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                    className="w-full rounded-xl border-2 border-black bg-white px-4 py-2.5 text-center text-xs font-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-gray-100 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none sm:w-auto sm:py-2"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
                     disabled={processing}
-                    className="w-full sm:w-auto text-center rounded-xl border-2 border-black bg-red-600 px-5 py-2.5 sm:py-2 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-red-700 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50"
+                    className="w-full rounded-xl border-2 border-black bg-red-600 px-5 py-2.5 text-center text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:bg-red-700 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50 sm:w-auto sm:py-2"
                 >
                     {processing ? 'Creating...' : 'Create Space'}
                 </button>

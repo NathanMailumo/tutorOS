@@ -16,10 +16,14 @@ export default function PublicResourceForm({
         invite_emails: '',
     });
 
-    const isControlled = Boolean(externalData && externalSetData && externalOnSubmit);
+    const isControlled = Boolean(
+        externalData && externalSetData && externalOnSubmit,
+    );
     const data = isControlled ? externalData : localForm.data;
     const setData = isControlled ? externalSetData : localForm.setData;
-    const processing = isControlled ? (externalProcessing ?? false) : localForm.processing;
+    const processing = isControlled
+        ? (externalProcessing ?? false)
+        : localForm.processing;
     const errors = isControlled ? (externalErrors ?? {}) : localForm.errors;
 
     const handleSubmit = (e) => {
