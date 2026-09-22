@@ -10,15 +10,14 @@ export default function AuthenticatedLayout({ children, resources }) {
         resources && resources.length > 0 ? resources : props.resources || [];
 
     const privateResources = userResources.filter(
-        (item) => item.resource_type === 'private' || !item.resource_type
+        (item) => item.resource_type === 'private' || !item.resource_type,
     );
     const publicResources = userResources.filter(
-        (item) => item.resource_type === 'public'
+        (item) => item.resource_type === 'public',
     );
 
     const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
 
     return (
         <>

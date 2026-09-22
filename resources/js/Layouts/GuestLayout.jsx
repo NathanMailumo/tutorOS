@@ -17,10 +17,10 @@ export default function GuestLayout({ children }) {
             />
 
             {/* Top Navigation Bar */}
-            <header className="relative z-10 flex items-center justify-between border-b border-black bg-[#121212] px-4 py-3 sm:px-6 sm:py-4 md:px-12 text-white">
+            <header className="relative z-10 flex items-center justify-between border-b border-black bg-[#121212] px-4 py-3 text-white sm:px-6 sm:py-4 md:px-12">
                 <Link href="/" className="flex items-center gap-2 sm:gap-3">
-                    <ApplicationLogo className="h-7 w-7 sm:h-8 sm:w-8 fill-current text-[#FF6B35]" />
-                    <span className="text-lg sm:text-xl font-black tracking-tight text-white">
+                    <ApplicationLogo className="h-7 w-7 fill-current text-[#FF6B35] sm:h-8 sm:w-8" />
+                    <span className="text-lg font-black tracking-tight text-white sm:text-xl">
                         TutorOS
                     </span>
                 </Link>

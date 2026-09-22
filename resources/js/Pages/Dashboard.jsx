@@ -3,11 +3,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Resource from '@/Components/Resource';
 
-export default function Dashboard() {
+export default function Dashboard({ resources }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout resources={resources}>
             <Head title="Dashboard" />
 
             {/* FULL SCREEN CANVAS WORKSPACE */}

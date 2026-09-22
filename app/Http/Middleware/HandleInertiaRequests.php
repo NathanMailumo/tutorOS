@@ -35,17 +35,20 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'privateResources' => fn () => $request->user()
+            'privateResources' => fn() => $request->user()
                 ? Resource::where('user_id', $request->user()->id)
-                    ->where('resource_type', 'private')
-                    ->latest()
-                    ->get()
+                ->where('resource_type', 'private')
+                ->latest()
+                ->get()
                 : [],
-            'publicResources' => fn () => $request->user()
+            'publicResources' => fn() => $request->user()
                 ? Resource::where('user_id', $request->user()->id)
-                    ->where('resource_type', 'public')
-                    ->latest()
-                    ->get()
+                ->where('resource_type', 'public')
+                ->latest()
+                ->get()
+                : [],
+            'resources' => fn() => $request->user()
+                ? Resource::where('user_id', $request->user()->id)->get()
                 : [],
         ];
     }
