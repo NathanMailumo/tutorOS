@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ResourceItem;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Resource extends Model
 {
@@ -11,7 +13,11 @@ class Resource extends Model
     protected $fillable = [
         'course_name',
         'user_id',
-        // 'resource_name',
         'resource_type',
     ];
+
+    public function resourceItems() : HasMany
+    {
+        return $this->hasMany(ResourceItem::class);
+    }
 }

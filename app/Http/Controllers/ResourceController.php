@@ -46,21 +46,32 @@ class ResourceController extends Controller
         return redirect()->route('dashboard');
     }
 
-    public function privateResource(Request $request, Resource $resource)
+   public function privateResource(Request $request, Resource $resource)
     {
         if ($resource->user_id !== $request->user()->id) {
             abort(403, 'Unauthorized access to this private resource.');
         }
 
+        // Load items for this specific resource ordered by latest
+        $resource->load(['resourceItems' => function ($query) {
+            $query->latest();
+        }]);
+
         return Inertia::render('Resources/PrivateResource', [
             'resource' => $resource,
+            'items'    => $resource->resourceItems,
         ]);
     }
 
     public function publicResource(Request $request, Resource $resource)
     {
+        $resource->load(['resourceItems' => function ($query) {
+            $query->latest();
+        }]);
+
         return Inertia::render('Resources/PublicResource', [
             'resource' => $resource,
+            'items'    => $resource->resourceItems,
         ]);
     }
 

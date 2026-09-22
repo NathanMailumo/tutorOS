@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\ResourceItemController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/resources/{resource}', [ResourceController::class, 'showResource'])
         ->middleware('verified')
         ->name('resources.show');
+
+    Route::post('/resource-items', [ResourceItemController::class, 'store'])
+        ->name('resource-items.store');
 });
 
 require __DIR__.'/auth.php';
