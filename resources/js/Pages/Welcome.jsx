@@ -6,7 +6,7 @@ export default function Welcome({ auth }) {
         <GuestLayout>
             <Head title="Teaching Made Smarter" />
 
-            <div className="relative mx-auto flex min-h-[80vh] sm:min-h-[85vh] w-full max-w-7xl flex-col justify-center px-4 py-8 sm:py-12 sm:px-6 md:py-20 lg:px-8">
+            <div className="relative mx-auto flex min-h-[80vh] w-full max-w-7xl flex-col justify-center px-4 py-8 sm:min-h-[85vh] sm:px-6 sm:py-12 md:py-20 lg:px-8">
                 {/* FLOATING CARD 1: Top-Left */}
                 <div className="absolute -left-4 top-4 z-10 hidden -rotate-6 transition-all duration-300 hover:rotate-0 xl:block 2xl:-left-12">
                     <div className="w-64 rounded-2xl border-2 border-black bg-[#FF6B35] p-5 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -98,28 +98,28 @@ export default function Welcome({ auth }) {
                 {/* MAIN HERO CENTER */}
                 <div className="z-20 mx-auto my-auto flex max-w-xl flex-col items-center text-center">
                     {/* Category Tag */}
-                    <div className="mb-4 sm:mb-6 inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#FF6B35] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:text-sm">
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#FF6B35] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:mb-6 md:text-sm">
                         <span>🎓</span> Peer-Mentor Platform
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="mb-3 sm:mb-4 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight text-[#121212]">
+                    <h1 className="mb-3 text-4xl font-black leading-[1.1] tracking-tight text-[#121212] sm:mb-4 sm:text-5xl md:text-6xl lg:text-7xl">
                         Teaching made <br />
                         <span className="text-[#FF6B35]">smarter.</span>
                     </h1>
 
                     {/* Subheadline */}
-                    <p className="mb-6 sm:mb-8 max-w-lg text-sm sm:text-base md:text-lg font-medium leading-relaxed text-gray-600">
+                    <p className="mb-6 max-w-lg text-sm font-medium leading-relaxed text-gray-600 sm:mb-8 sm:text-base md:text-lg">
                         TutorOS generates complete teaching sessions, quizzes,
                         and revision packs for peer mentors.
                     </p>
 
                     {/* Action Buttons */}
-                    <div className="flex w-full flex-col items-center gap-3 sm:gap-4 sm:w-auto sm:flex-row">
+                    <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
                         {auth?.user ? (
                             <Link
                                 href={route('dashboard')}
-                                className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 sm:px-8 sm:py-4 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto"
+                                className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
                             >
                                 Go To Dashboard
                             </Link>
@@ -127,14 +127,14 @@ export default function Welcome({ auth }) {
                             <>
                                 <Link
                                     href={route('register')}
-                                    className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 sm:px-8 sm:py-4 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto"
+                                    className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
                                 >
                                     Get Started Free
                                 </Link>
 
                                 <Link
                                     href={route('login')}
-                                    className="w-full rounded-2xl border-2 border-black bg-white px-6 py-3.5 sm:px-8 sm:py-4 text-center text-sm font-black uppercase tracking-wider text-[#121212] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto"
+                                    className="w-full rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-[#121212] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
                                 >
                                     Sign In
                                 </Link>

@@ -1,7 +1,10 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function GuestLayout({ children }) {
+    const { props } = usePage();
+    const user = props.auth?.user;
+
     return (
         <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#F7F6F0] font-sans antialiased">
             {/* Dotted Grid Background Overlay */}
@@ -23,18 +26,31 @@ export default function GuestLayout({ children }) {
                 </Link>
 
                 <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
-                    <Link
-                        href={route('login')}
-                        className="text-xs sm:text-sm font-semibold text-gray-300 transition-colors hover:text-white"
-                    >
-                        Sign In
-                    </Link>
-                    <Link
-                        href={route('register')}
-                        className="rounded-xl border-2 border-black bg-[#FF6B35] px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none sm:px-5 sm:py-2.5 sm:text-sm"
-                    >
-                        Get Started
-                    </Link>
+                    {user ? (
+                        <Link
+                            method="post"
+                            href={route('logout')}
+                            as="button"
+                            className="rounded-xl border-2 border-black bg-[#FF6B35] px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none sm:px-5 sm:py-2.5 sm:text-sm"
+                        >
+                            Logout
+                        </Link>
+                    ) : (
+                        <>
+                            <Link
+                                href={route('login')}
+                                className="text-xs font-semibold text-gray-300 transition-colors hover:text-white sm:text-sm"
+                            >
+                                Sign In
+                            </Link>
+                            <Link
+                                href={route('register')}
+                                className="rounded-xl border-2 border-black bg-[#FF6B35] px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none sm:px-5 sm:py-2.5 sm:text-sm"
+                            >
+                                Get Started
+                            </Link>
+                        </>
+                    )}
                 </div>
             </header>
 

@@ -1,52 +1,24 @@
 import React, { useState } from 'react';
-import { Link, useForm, usePage } from '@inertiajs/react';
-import PrivateResource from '@/Components/PrivateResource';
-import PublicResource from '@/Components/PublicResource';
+import { Link, usePage } from '@inertiajs/react';
+import Resource from '@/Components/Resource';
 
-export default function AuthenticatedLayout({
-    children,
-    privateResources,
-    publicResources,
-}) {
+export default function AuthenticatedLayout({ children, resources }) {
     const { url, props } = usePage();
     const user = props.auth?.user;
 
-    const userPrivateResources =
-        privateResources && privateResources.length > 0
-            ? privateResources
-            : props.privateResources || [];
-    const userPublicResources =
-        publicResources && publicResources.length > 0
-            ? publicResources
-            : props.publicResources || [];
+    const userResources =
+        resources && resources.length > 0 ? resources : props.resources || [];
 
-    const [isPrivateResource, setIsPrivateResource] = useState(false);
-    const [isPublicResource, setIsPublicResource] = useState(false);
+    const privateResources = userResources.filter(
+        (item) => item.resource_type === 'private' || !item.resource_type
+    );
+    const publicResources = userResources.filter(
+        (item) => item.resource_type === 'public'
+    );
+
+    const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { data, setData, post, processing, errors, reset } = useForm({
-        course_name: '',
-        resource_type: '',
-        invite_emails: '',
-    });
 
-    const closeResourceForm = () => {
-        setIsPrivateResource(false);
-        setIsPublicResource(false);
-        reset();
-    };
-
-    const openResourceForm = (type) => {
-        setData('resource_type', type);
-        setIsPrivateResource(type === 'private');
-        setIsPublicResource(type === 'public');
-    };
-
-    const handleResourceSubmit = (event) => {
-        event.preventDefault();
-        post(route().has('resources.store') ? route('resources.store') : '#', {
-            onSuccess: closeResourceForm,
-        });
-    };
 
     return (
         <>
@@ -198,41 +170,25 @@ export default function AuthenticatedLayout({
                     {/* 2. PRIVATE RESOURCES SECTION */}
                     <div className="space-y-1">
                         <span className="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-[#5f5f5f]">
-                            Private Resource
+                            Personal Space
                         </span>
 
                         <button
                             type="button"
-                            onClick={() => openResourceForm('private')}
+                            onClick={() => setIsResourceModalOpen(true)}
                             className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
                             <span className="text-sm font-bold">+</span>
-                            <span>Add new</span>
+                            <span>Create</span>
                         </button>
 
                         {/* DYNAMIC PRIVATE RESOURCES LIST */}
-                        {userPrivateResources.length > 0 && (
+                        {privateResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
-                                {userPrivateResources.map((item) => (
-                                    <Link
+                                {privateResources.map((item) => (
+                                    <div
                                         key={item.id}
-                                        onClick={() =>
-                                            setIsMobileMenuOpen(false)
-                                        }
-                                        href={
-                                            route().has('resources.private')
-                                                ? route(
-                                                      'resources.private',
-                                                      item.id,
-                                                  )
-                                                : route().has('resources.show')
-                                                  ? route(
-                                                        'resources.show',
-                                                        item.id,
-                                                    )
-                                                  : '#'
-                                        }
-                                        className={`flex items-center gap-2 truncate rounded-md px-2 py-1 text-xs transition-colors ${
+                                        className={`flex items-center rounded-md text-xs transition-colors ${
                                             url ===
                                                 `/resources/private/${item.id}` ||
                                             url === `/resources/${item.id}`
@@ -240,13 +196,71 @@ export default function AuthenticatedLayout({
                                                 : 'hover:bg-[#252525] hover:text-gray-200'
                                         }`}
                                     >
-                                        <span className="text-[10px]">🔒</span>
-                                        <span className="truncate">
-                                            {item.course_name ||
-                                                item.name ||
-                                                item.title}
-                                        </span>
-                                    </Link>
+                                        <Link
+                                            onClick={() =>
+                                                setIsMobileMenuOpen(false)
+                                            }
+                                            href={
+                                                route().has('resources.private')
+                                                    ? route(
+                                                          'resources.private',
+                                                          item.id,
+                                                      )
+                                                    : route().has(
+                                                            'resources.show',
+                                                        )
+                                                      ? route(
+                                                            'resources.show',
+                                                            item.id,
+                                                        )
+                                                      : '#'
+                                            }
+                                            className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1"
+                                        >
+                                            <span className="text-[10px]">
+                                                🔒
+                                            </span>
+                                            <span className="truncate">
+                                                {item.course_name ||
+                                                    item.name ||
+                                                    item.title}
+                                            </span>
+                                        </Link>
+                                        <Link
+                                            method="delete"
+                                            href={route(
+                                                'resources.destroy',
+                                                item.id,
+                                            )}
+                                            as="button"
+                                            onClick={(event) => {
+                                                if (
+                                                    !window.confirm(
+                                                        'Delete this private resource?',
+                                                    )
+                                                ) {
+                                                    event.preventDefault();
+                                                }
+                                            }}
+                                            className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[#777] transition-colors hover:bg-red-500/15 hover:text-red-400"
+                                            title="Delete private resource"
+                                            aria-label={`Delete ${item.course_name || item.name || item.title}`}
+                                        >
+                                            <svg
+                                                className="h-3.5 w-3.5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                        </Link>
+                                    </div>
                                 ))}
                             </div>
                         )}
@@ -255,41 +269,25 @@ export default function AuthenticatedLayout({
                     {/* 3. PUBLIC RESOURCES SECTION */}
                     <div className="space-y-1">
                         <span className="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-[#5f5f5f]">
-                            Public Resource
+                            Collaborative Space
                         </span>
 
                         <button
                             type="button"
-                            onClick={() => openResourceForm('public')}
+                            onClick={() => setIsResourceModalOpen(true)}
                             className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
                             <span className="text-sm font-bold">+</span>
-                            <span>Add new</span>
+                            <span>Create</span>
                         </button>
 
                         {/* DYNAMIC PUBLIC RESOURCES LIST */}
-                        {userPublicResources.length > 0 && (
+                        {publicResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
-                                {userPublicResources.map((item) => (
-                                    <Link
+                                {publicResources.map((item) => (
+                                    <div
                                         key={item.id}
-                                        onClick={() =>
-                                            setIsMobileMenuOpen(false)
-                                        }
-                                        href={
-                                            route().has('resources.public')
-                                                ? route(
-                                                      'resources.public',
-                                                      item.id,
-                                                  )
-                                                : route().has('resources.show')
-                                                  ? route(
-                                                        'resources.show',
-                                                        item.id,
-                                                    )
-                                                  : '#'
-                                        }
-                                        className={`flex items-center gap-2 truncate rounded-md px-2 py-1 text-xs transition-colors ${
+                                        className={`flex items-center rounded-md text-xs transition-colors ${
                                             url ===
                                                 `/resources/public/${item.id}` ||
                                             url === `/resources/${item.id}`
@@ -297,13 +295,71 @@ export default function AuthenticatedLayout({
                                                 : 'hover:bg-[#252525] hover:text-gray-200'
                                         }`}
                                     >
-                                        <span className="text-[10px]">🌐</span>
-                                        <span className="truncate">
-                                            {item.course_name ||
-                                                item.name ||
-                                                item.title}
-                                        </span>
-                                    </Link>
+                                        <Link
+                                            onClick={() =>
+                                                setIsMobileMenuOpen(false)
+                                            }
+                                            href={
+                                                route().has('resources.public')
+                                                    ? route(
+                                                          'resources.public',
+                                                          item.id,
+                                                      )
+                                                    : route().has(
+                                                            'resources.show',
+                                                        )
+                                                      ? route(
+                                                            'resources.show',
+                                                            item.id,
+                                                        )
+                                                      : '#'
+                                            }
+                                            className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1"
+                                        >
+                                            <span className="text-[10px]">
+                                                🌐
+                                            </span>
+                                            <span className="truncate">
+                                                {item.course_name ||
+                                                    item.name ||
+                                                    item.title}
+                                            </span>
+                                        </Link>
+                                        <Link
+                                            method="delete"
+                                            href={route(
+                                                'resources.destroy',
+                                                item.id,
+                                            )}
+                                            as="button"
+                                            onClick={(event) => {
+                                                if (
+                                                    !window.confirm(
+                                                        'Delete this public resource?',
+                                                    )
+                                                ) {
+                                                    event.preventDefault();
+                                                }
+                                            }}
+                                            className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[#777] transition-colors hover:bg-red-500/15 hover:text-red-400"
+                                            title="Delete public resource"
+                                            aria-label={`Delete ${item.course_name || item.name || item.title}`}
+                                        >
+                                            <svg
+                                                className="h-3.5 w-3.5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                        </Link>
+                                    </div>
                                 ))}
                             </div>
                         )}
@@ -427,46 +483,10 @@ export default function AuthenticatedLayout({
                 {children}
             </main>
 
-            {(isPrivateResource || isPublicResource) && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-4">
-                    <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border-2 border-black bg-white p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:p-6 sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                        <div className="flex items-center justify-between border-b-2 border-black pb-3">
-                            <h2 className="text-base font-black text-[#121212] sm:text-lg">
-                                {isPrivateResource
-                                    ? 'Create Private Resource'
-                                    : 'Create Public Resource'}
-                            </h2>
-                            <button
-                                type="button"
-                                onClick={closeResourceForm}
-                                className="flex h-7 w-7 items-center justify-center rounded-lg border-2 border-black bg-red-500 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600"
-                            >
-                                ✕
-                            </button>
-                        </div>
-
-                        {isPrivateResource ? (
-                            <PrivateResource
-                                data={data}
-                                setData={setData}
-                                onSubmit={handleResourceSubmit}
-                                onClose={closeResourceForm}
-                                processing={processing}
-                                errors={errors}
-                            />
-                        ) : (
-                            <PublicResource
-                                data={data}
-                                setData={setData}
-                                onSubmit={handleResourceSubmit}
-                                onClose={closeResourceForm}
-                                processing={processing}
-                                errors={errors}
-                            />
-                        )}
-                    </div>
-                </div>
-            )}
+            <Resource
+                isOpen={isResourceModalOpen}
+                onClose={() => setIsResourceModalOpen(false)}
+            />
         </>
     );
 }

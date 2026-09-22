@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import CreateResourceModal from '@/Components/CreateResourceModal';
+import Resource from '@/Components/Resource';
 
 export default function Dashboard() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -12,7 +12,7 @@ export default function Dashboard() {
 
             {/* FULL SCREEN CANVAS WORKSPACE */}
             <div
-                className="relative flex min-h-[calc(100vh-56px)] md:min-h-screen w-full flex-col justify-start overflow-y-auto p-4 sm:p-6 lg:p-10"
+                className="relative flex min-h-[calc(100vh-56px)] w-full flex-col justify-start overflow-y-auto p-4 sm:p-6 md:min-h-screen lg:p-10"
                 style={{
                     backgroundImage:
                         'radial-gradient(#d1d5db 1.5px, transparent 1.5px)',
@@ -22,7 +22,8 @@ export default function Dashboard() {
                 {/* DASHBOARD HEADER */}
                 <div className="z-10 max-w-2xl space-y-2 pb-2 pt-1 sm:pt-2">
                     <h1 className="flex flex-wrap items-center gap-2 text-2xl font-black tracking-tight text-[#121212] sm:text-3xl md:text-4xl">
-                        <span>Welcome to</span> <span className="text-red-600">TutorOS</span>{' '}
+                        <span>Welcome to</span>{' '}
+                        <span className="text-red-600">TutorOS</span>{' '}
                         <span className="inline-block animate-bounce">👋</span>
                     </h1>
                     <p className="text-xs font-bold leading-relaxed text-gray-600">
@@ -35,7 +36,7 @@ export default function Dashboard() {
                 {/* RESPONSIVE NEO-BRUTALIST CANVAS GRID */}
                 <div className="my-6 grid w-full max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {/* 1. YOUTUBE CARD FEATURE */}
-                    <div className="w-full transition-all sm:-rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                    <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-2">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="relative flex h-24 w-full flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-black bg-slate-900 p-2 text-center">
@@ -62,7 +63,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* 2. STICKY NOTE FEATURE */}
-                    <div className="w-full transition-all sm:rotate-1 hover:rotate-0 hover:scale-[1.02]">
+                    <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:rotate-1">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-[#FEF08A] p-4 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex items-center justify-between border-b border-black/10 pb-1.5">
@@ -87,7 +88,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* 3. FORMULA CHEAT SHEET FEATURE */}
-                    <div className="w-full transition-all sm:-rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                    <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-2">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex items-center justify-between border-b border-gray-100 pb-1">
@@ -114,7 +115,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* 4. REVISION PACKS FEATURE */}
-                    <div className="w-full transition-all sm:rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                    <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:rotate-2">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-[#8A2BE2] p-4 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex items-center justify-between">
@@ -144,7 +145,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* 5. WEBSITE LINK FEATURE */}
-                    <div className="w-full transition-all sm:-rotate-1 hover:rotate-0 hover:scale-[1.02]">
+                    <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-1">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex h-14 w-full items-center justify-between rounded-xl border-2 border-black bg-sky-500 p-2.5 text-white">
@@ -169,7 +170,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* 6. CREATE NEW RESOURCE CARD */}
-                    <div className="w-full transition-all sm:rotate-2 hover:rotate-0 hover:scale-[1.02]">
+                    <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:rotate-2">
                         <div className="flex min-h-[230px] flex-col items-center justify-between rounded-2xl border-2 border-dashed border-black bg-[#2ED573]/15 p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="my-auto flex flex-col items-center">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-[#2ED573] text-lg font-black text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)]">
@@ -199,7 +200,7 @@ export default function Dashboard() {
             </div>
 
             {/* RESOURCE CREATION MODAL */}
-            <CreateResourceModal
+            <Resource
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
             />

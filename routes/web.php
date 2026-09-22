@@ -18,7 +18,6 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])
-        ->middleware('verified')
         ->name('dashboard');
 
         // Sessions Routes
@@ -34,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/resources', [ResourceController::class, 'createResource'])
         ->middleware('verified')
         ->name('resources.store');
+    Route::delete('/resources/{resource}', [ResourceController::class, 'destroy'])
+        ->middleware('verified')
+        ->name('resources.destroy');
     Route::get('/resources/private/{resource}', [ResourceController::class, 'privateResource'])
         ->middleware('verified')
         ->name('resources.private');

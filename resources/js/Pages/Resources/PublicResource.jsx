@@ -4,7 +4,13 @@ import { Head } from '@inertiajs/react';
 export default function PublicResourceSpace({ resource }) {
     return (
         <AuthenticatedLayout>
-            <Head title={resource?.course_name ? `${resource.course_name} - Public Space` : 'Public Resource'} />
+            <Head
+                title={
+                    resource?.course_name
+                        ? `${resource.course_name} - Public Space`
+                        : 'Public Resource'
+                }
+            />
 
             <div className="p-6 sm:p-10">
                 <div className="space-y-4">
@@ -14,7 +20,8 @@ export default function PublicResourceSpace({ resource }) {
                     </div>
 
                     <h1 className="text-3xl font-black text-[#121212]">
-                        {resource?.course_name || 'Welcome to your public resource page'}
+                        {resource?.course_name ||
+                            'Welcome to your public resource page'}
                     </h1>
 
                     <p className="text-sm font-medium text-gray-600">

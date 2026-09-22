@@ -37,6 +37,15 @@ class ResourceController extends Controller
         return redirect()->route('resources.public', $resource->id);
     }
 
+    public function destroy(Request $request, Resource $resource)
+    {
+        abort_unless($resource->user_id === $request->user()->id, 403);
+
+        $resource->delete();
+
+        return redirect()->route('dashboard');
+    }
+
     public function privateResource(Request $request, Resource $resource)
     {
         if ($resource->user_id !== $request->user()->id) {
