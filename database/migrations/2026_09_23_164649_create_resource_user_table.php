@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('resource_id')->constrained()->cascadeOnDelete();
             $table->enum('role', ['owner', 'viewer']);
-            $table->enum('status', ['pending', 'accepted'])->default('accepted');
+            $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
             $table->timestamps();
             $table->unique(['resource_id', 'user_id']);
         });

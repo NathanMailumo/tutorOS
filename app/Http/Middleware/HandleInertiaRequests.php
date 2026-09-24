@@ -30,25 +30,34 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Define $user once from the $request
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
-            'privateResources' => fn() => $request->user()
-                ? Resource::where('user_id', $request->user()->id)
+            'privateResources' => fn() => $user
+                ? Resource::where('user_id', $user->id)
                 ->where('resource_type', 'private')
                 ->latest()
                 ->get()
                 : [],
-            'publicResources' => fn() => $request->user()
-                ? Resource::where('user_id', $request->user()->id)
+            'publicResources' => fn() => $user
+                ? Resource::where('user_id', $user->id)
                 ->where('resource_type', 'public')
                 ->latest()
                 ->get()
                 : [],
-            'resources' => fn() => $request->user()
-                ? Resource::where('user_id', $request->user()->id)->get()
+            'resources' => fn() => $user
+                ? Resource::where('user_id', $user->id)
+                ->orWhereHas('collaborators', function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                        ->where('status', 'accepted');
+                })
+                ->latest()
+                ->get()
                 : [],
         ];
     }

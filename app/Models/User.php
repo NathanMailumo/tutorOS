@@ -50,15 +50,22 @@ class User extends Authenticatable
         ];
     }
 
-    public function resourceItems() : HasMany
+    public function resourceItems(): HasMany
     {
         return $this->hasMany(ResourceItem::class);
     }
 
     public function sharedResources(): BelongsToMany
-{
-    return $this->belongsToMany(Resource::class, 'resource_users')
-        ->withPivot('status')
-        ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(Resource::class, 'resource_users')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
+    // public function collaboratingResources(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Resource::class, 'resource_user')
+    //         ->withPivot('status')
+    //         ->withTimestamps();
+    // }
 }

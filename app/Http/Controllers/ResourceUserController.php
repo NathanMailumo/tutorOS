@@ -54,6 +54,32 @@ class ResourceUserController extends Controller
 
         return redirect()->back()->with('success', 'User invited successfully.');
     }
+    // accepting a pending invitation
+    public function acceptInvite(Resource $resource)
+    {
+        $userId = Auth::id();
+
+        $resource->collaborators()->updateExistingPivot($userId, [
+            'status' => 'accepted'
+        ]);
+
+        return redirect()->route('resources.public', $resource->id)
+            ->with('success', 'You have joined the workspace!');
+    }
+
+    // decline an invite
+    public function declineInvite(Resource $resource)
+    {
+         $userId = Auth::id();
+
+        $resource->collaborators()->updateExistingPivot($userId, [
+            'status' => 'declined'
+        ]);
+
+        return redirect()->route('resources.public', $resource->id)
+            ->with('success', 'You have joined the workspace!');
+    }
+
 
     /**
      * Remove a collaborator from the workspace pivot table.

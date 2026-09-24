@@ -1,16 +1,31 @@
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import Resource from '@/Components/Resource';
 
-export default function Dashboard({ resources }) {
+export default function Dashboard({ resources = [], pendingInvitations = [] }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const handleAccept = (resourceId) => {
+        router.post(
+            typeof route === 'function'
+                ? route('resources.invitations.accept', resourceId)
+                : `/resources/${resourceId}/accept`,
+        );
+    };
+
+    const handleDecline = (resourceId) => {
+        router.post(
+            typeof route === 'function'
+                ? route('resources.invitations.decline', resourceId)
+                : `/resources/${resourceId}/decline`,
+        );
+    };
 
     return (
         <AuthenticatedLayout resources={resources}>
             <Head title="Dashboard" />
 
-            {/* FULL SCREEN CANVAS WORKSPACE */}
             <div
                 className="relative flex min-h-[calc(100vh-56px)] w-full flex-col justify-start overflow-y-auto p-4 sm:p-6 md:min-h-screen lg:p-10"
                 style={{
@@ -32,6 +47,54 @@ export default function Dashboard({ resources }) {
                         revision packs all in one visual workspace.
                     </p>
                 </div>
+
+                {/* PENDING WORKSPACE INVITATIONS SECTION */}
+                {pendingInvitations.length > 0 && (
+                    <div className="my-4 max-w-4xl space-y-3">
+                        <h2 className="text-xs font-black uppercase tracking-wider text-black">
+                            📩 Pending Invitations ({pendingInvitations.length})
+                        </h2>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            {pendingInvitations.map((invite) => (
+                                <div
+                                    key={invite.id}
+                                    className="flex items-center justify-between rounded-xl border-2 border-black bg-yellow-300 p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                                >
+                                    <div>
+                                        <p className="text-xs font-black text-black">
+                                            {invite.course_name}
+                                        </p>
+                                        <p className="text-[10px] font-bold text-gray-800">
+                                            Invited by{' '}
+                                            {invite.user?.name ||
+                                                'Workspace Owner'}
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-1.5">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleAccept(invite.id)
+                                            }
+                                            className="rounded-lg border-2 border-black bg-green-400 px-2.5 py-1 text-xs font-black text-black shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+                                        >
+                                            Accept
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleDecline(invite.id)
+                                            }
+                                            className="rounded-lg border-2 border-black bg-white px-2.5 py-1 text-xs font-black text-red-600 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+                                        >
+                                            Decline
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* RESPONSIVE NEO-BRUTALIST CANVAS GRID */}
                 <div className="my-6 grid w-full max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,8 +140,7 @@ export default function Dashboard({ resources }) {
                                 </h3>
                                 <p className="mt-1.5 text-[10px] font-bold leading-tight text-black/80">
                                     Jot down sticky notes for quick reminders,
-                                    key concepts, or homework tasks relevant to
-                                    your course.
+                                    key concepts, or homework tasks.
                                 </p>
                             </div>
                             <div className="mt-3 text-[9px] font-bold text-black/50">
@@ -131,8 +193,7 @@ export default function Dashboard({ resources }) {
                                 </h3>
                                 <p className="mt-1.5 text-[10px] font-medium leading-tight text-white/90">
                                     Generated automatically by TutorOS session
-                                    feature into flashcards, quizzes, and
-                                    summaries.
+                                    feature.
                                 </p>
                             </div>
                             <div className="mt-3 flex items-center justify-between border-t border-white/20 pt-2 text-[9px] font-bold">
@@ -159,8 +220,7 @@ export default function Dashboard({ resources }) {
                                 </h3>
                                 <p className="mt-1 text-[10px] font-medium leading-tight text-gray-600">
                                     Save web links on a certain topic to quickly
-                                    return to articles, documentation, or online
-                                    readings.
+                                    return to articles.
                                 </p>
                             </div>
                             <div className="mt-3 truncate border-t border-gray-100 pt-1.5 text-[9px] font-bold text-sky-600">
@@ -185,7 +245,6 @@ export default function Dashboard({ resources }) {
                                 </p>
                             </div>
 
-                            {/* BUTTON THAT TRIGGERS POPUP */}
                             <button
                                 type="button"
                                 onClick={() => setIsCreateModalOpen(true)}
@@ -199,7 +258,6 @@ export default function Dashboard({ resources }) {
                 </div>
             </div>
 
-            {/* RESOURCE CREATION MODAL */}
             <Resource
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}

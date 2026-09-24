@@ -65,6 +65,10 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/resources/{resource}/collaborators/{user}', [ResourceUserController::class, 'removeCollaborator'])
         ->name('resources.collaborators.destroy');
+
+    // invite status routes
+    Route::post('/resources/{resource}/accept', [ResourceUserController::class, 'acceptInvite'])->name('resources.invitations.accept');
+    Route::post('/resources/{resource}/decline', [ResourceUserController::class, 'declineInvite'])->name('resources.invitations.decline');
 });
 
 require __DIR__ . '/auth.php';

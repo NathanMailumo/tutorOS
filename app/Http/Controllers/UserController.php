@@ -8,10 +8,21 @@ use App\Models\Resource;
 
 class UserController extends Controller
 {
-    public function dashboard(Request $request){
-       $resources = Resource::where('user_id', $request->user()->id)
-                    ->get();
+    public function dashboard(Request $request)
+    {
+        $user = $request->user();
 
-        return Inertia::render('Dashboard', compact('resources'));
+        $resources = Resource::where('user_id', $user->id)
+            ->orWhereHas('collaborators', function ($q) use ($user) {
+                $q->where('user_id', $user->id)->where('status', 'accepted');
+            })
+            ->get();
+
+        $pendingInvitations = Resource::whereHas('collaborators', function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+                ->where('status', 'pending');
+        })->with('user:id,name,email')->get();
+
+        return Inertia::render('Dashboard', compact('resources', 'pendingInvitations'));
     }
 }

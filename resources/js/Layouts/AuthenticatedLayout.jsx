@@ -10,10 +10,10 @@ export default function AuthenticatedLayout({ children, resources }) {
         resources && resources.length > 0 ? resources : props.resources || [];
 
     const privateResources = userResources.filter(
-        (item) => item.resource_type === 'private' || !item.resource_type,
+        (item) => item.resource_type === 'private' && item.user_id === user?.id,
     );
     const publicResources = userResources.filter(
-        (item) => item.resource_type === 'public',
+        (item) => item.resource_type === 'public' || item.user_id !== user?.id,
     );
 
     const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
@@ -281,85 +281,95 @@ export default function AuthenticatedLayout({ children, resources }) {
                         </button>
 
                         {/* DYNAMIC PUBLIC RESOURCES LIST */}
+                        {/* DYNAMIC PUBLIC / COLLABORATIVE RESOURCES LIST */}
                         {publicResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
-                                {publicResources.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className={`flex items-center rounded-md text-xs transition-colors ${
-                                            url ===
-                                                `/resources/public/${item.id}` ||
-                                            url === `/resources/${item.id}`
-                                                ? 'bg-[#2c2c2c] font-semibold text-white'
-                                                : 'hover:bg-[#252525] hover:text-gray-200'
-                                        }`}
-                                    >
-                                        <Link
-                                            onClick={() =>
-                                                setIsMobileMenuOpen(false)
-                                            }
-                                            href={
-                                                route().has('resources.public')
-                                                    ? route(
-                                                          'resources.public',
-                                                          item.id,
-                                                      )
-                                                    : route().has(
-                                                            'resources.show',
-                                                        )
-                                                      ? route(
-                                                            'resources.show',
-                                                            item.id,
-                                                        )
-                                                      : '#'
-                                            }
-                                            className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1"
+                                {publicResources.map((item) => {
+                                    const isOwner = item.user_id === user?.id;
+
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`flex items-center rounded-md text-xs transition-colors ${
+                                                url ===
+                                                    `/resources/public/${item.id}` ||
+                                                url === `/resources/${item.id}`
+                                                    ? 'bg-[#2c2c2c] font-semibold text-white'
+                                                    : 'hover:bg-[#252525] hover:text-gray-200'
+                                            }`}
                                         >
-                                            <span className="text-[10px]">
-                                                🌐
-                                            </span>
-                                            <span className="truncate">
-                                                {item.course_name ||
-                                                    item.name ||
-                                                    item.title}
-                                            </span>
-                                        </Link>
-                                        <Link
-                                            method="delete"
-                                            href={route(
-                                                'resources.destroy',
-                                                item.id,
-                                            )}
-                                            as="button"
-                                            onClick={(event) => {
-                                                if (
-                                                    !window.confirm(
-                                                        'Delete this public resource?',
-                                                    )
-                                                ) {
-                                                    event.preventDefault();
+                                            <Link
+                                                onClick={() =>
+                                                    setIsMobileMenuOpen(false)
                                                 }
-                                            }}
-                                            className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[#777] transition-colors hover:bg-red-500/15 hover:text-red-400"
-                                            title="Delete public resource"
-                                            aria-label={`Delete ${item.course_name || item.name || item.title}`}
-                                        >
-                                            <svg
-                                                className="h-3.5 w-3.5"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
+                                                href={
+                                                    route().has(
+                                                        'resources.public',
+                                                    )
+                                                        ? route(
+                                                              'resources.public',
+                                                              item.id,
+                                                          )
+                                                        : route().has(
+                                                                'resources.show',
+                                                            )
+                                                          ? route(
+                                                                'resources.show',
+                                                                item.id,
+                                                            )
+                                                          : '#'
+                                                }
+                                                className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1"
                                             >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                />
-                                            </svg>
-                                        </Link>
-                                    </div>
-                                ))}
+                                                <span className="text-[10px]">
+                                                    🌐
+                                                </span>
+                                                <span className="truncate">
+                                                    {item.course_name ||
+                                                        item.name ||
+                                                        item.title}
+                                                </span>
+                                            </Link>
+
+                                            {/* ONLY SHOW DELETE BUTTON IF USER IS THE OWNER */}
+                                            {isOwner && (
+                                                <Link
+                                                    method="delete"
+                                                    href={route(
+                                                        'resources.destroy',
+                                                        item.id,
+                                                    )}
+                                                    as="button"
+                                                    onClick={(event) => {
+                                                        if (
+                                                            !window.confirm(
+                                                                'Delete this public resource?',
+                                                            )
+                                                        ) {
+                                                            event.preventDefault();
+                                                        }
+                                                    }}
+                                                    className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded text-[#777] transition-colors hover:bg-red-500/15 hover:text-red-400"
+                                                    title="Delete public resource"
+                                                >
+                                                    <svg
+                                                        className="h-3.5 w-3.5"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                        />
+                                                    </svg>
+                                                </Link>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
