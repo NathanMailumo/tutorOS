@@ -14,7 +14,10 @@ export default function Resource({ isOpen, onClose }) {
         e.preventDefault();
 
         post('/resources', {
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                onClose();
+            },
         });
     };
 
@@ -82,7 +85,6 @@ export default function Resource({ isOpen, onClose }) {
                         </label>
                         <select
                             value={data.resource_type}
-                            // defaultValue="private"
                             onChange={(e) =>
                                 setData('resource_type', e.target.value)
                             }

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Resource;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -52,4 +54,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(ResourceItem::class);
     }
+
+    public function sharedResources(): BelongsToMany
+{
+    return $this->belongsToMany(Resource::class, 'resource_users')
+        ->withPivot('status')
+        ->withTimestamps();
+}
 }
