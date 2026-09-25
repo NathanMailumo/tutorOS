@@ -6,28 +6,29 @@ export default function SessionIndex({ sessions = [] }) {
         <AuthenticatedLayout>
             <Head title="Sessions" />
 
-            <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-10">
+            {/* Constrain page container max-width and enable full horizontal containment */}
+            <div className="w-full max-w-7xl space-y-6 overflow-x-hidden px-4 py-6 sm:space-y-8 sm:px-6 sm:py-8 lg:px-8">
                 {/* PAGE HEADER */}
                 <div>
-                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[#121212] md:text-5xl">
+                    <h1 className="text-3xl font-black tracking-tight text-[#121212] sm:text-4xl md:text-5xl">
                         Sessions
                     </h1>
-                    <p className="mt-1 text-xs sm:text-sm font-medium text-gray-500">
+                    <p className="mt-1 text-xs font-medium text-gray-500 sm:text-sm">
                         Create and manage your teaching sessions.
                     </p>
                 </div>
 
                 {/* CREATE SESSION HERO BANNER */}
-                <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-black bg-[#FF6B35] p-5 sm:p-8 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:p-10">
+                <div className="relative overflow-hidden rounded-2xl border-2 border-black bg-[#FF6B35] p-5 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:p-8 sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:p-10">
                     <div className="relative z-10 flex flex-col items-start justify-between gap-5 sm:gap-6 md:flex-row md:items-center">
-                        <div className="space-y-2.5 sm:space-y-3">
-                            <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl border-2 border-black bg-white/20 text-xl sm:text-2xl font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="max-w-2xl space-y-2.5 sm:space-y-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-white/20 text-xl font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:h-12 sm:w-12 sm:rounded-2xl sm:text-2xl">
                                 +
                             </div>
-                            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white md:text-3xl">
+                            <h2 className="text-xl font-black tracking-tight text-white sm:text-2xl md:text-3xl">
                                 Create New Session
                             </h2>
-                            <p className="text-xs sm:text-sm font-medium text-white/90">
+                            <p className="text-xs font-medium text-white/90 sm:text-sm">
                                 Enter your course and topic — get complete
                                 cards, examples, and quiz questions.
                             </p>
@@ -38,7 +39,7 @@ export default function SessionIndex({ sessions = [] }) {
                                     ? route('sessions.create')
                                     : '#'
                             }
-                            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-sm font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                            className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-sm font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] sm:w-auto"
                         >
                             <span>Create</span>
                             <span>→</span>
@@ -54,14 +55,14 @@ export default function SessionIndex({ sessions = [] }) {
 
                     {sessions.length === 0 ? (
                         /* EMPTY STATE */
-                        <div className="flex flex-col items-center justify-center rounded-2xl sm:rounded-3xl border-2 border-black bg-white p-8 sm:p-12 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-black bg-white p-6 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:p-12">
                             <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-black bg-[#FF6B35] text-sm font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                 0
                             </div>
-                            <h4 className="mt-4 text-base sm:text-lg font-black text-[#121212]">
+                            <h4 className="mt-4 text-base font-black text-[#121212] sm:text-lg">
                                 No sessions generated yet
                             </h4>
-                            <p className="mt-1 max-w-sm text-xs font-medium text-gray-500">
+                            <p className="mt-1 max-w-sm text-xs font-medium text-gray-500 sm:text-sm">
                                 You haven't created any teaching sessions.
                                 Generate your first AI session above to get
                                 started.
@@ -78,7 +79,7 @@ export default function SessionIndex({ sessions = [] }) {
                                             ? route('sessions.show', session.id)
                                             : '#'
                                     }
-                                    className="group flex flex-col justify-between rounded-2xl border-2 border-black bg-white p-5 sm:p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+                                    className="group flex flex-col justify-between rounded-2xl border-2 border-black bg-white p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none sm:p-6"
                                 >
                                     <div className="space-y-4">
                                         {/* BADGES */}
@@ -96,13 +97,13 @@ export default function SessionIndex({ sessions = [] }) {
                                         </div>
 
                                         {/* TITLE */}
-                                        <h4 className="text-base sm:text-lg font-black leading-snug text-[#121212] group-hover:underline">
+                                        <h4 className="text-base font-black leading-snug text-[#121212] group-hover:underline sm:text-lg">
                                             {session.title}
                                         </h4>
                                     </div>
 
                                     {/* METADATA FOOTER */}
-                                    <div className="mt-6 flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-bold text-gray-500">
+                                    <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold text-gray-500 sm:gap-4">
                                         {session.card_count !== undefined && (
                                             <span>
                                                 {session.card_count} cards

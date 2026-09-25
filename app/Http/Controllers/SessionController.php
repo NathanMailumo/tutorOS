@@ -10,4 +10,8 @@ class SessionController extends Controller
     public function sessionIndex(){
         return Inertia::render('Sessions/SessionIndex');
     }
+
+    public function sessionCreate(){
+        return Inertia::render('Sessions/SessionCreate');
+    }
 }

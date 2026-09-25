@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/sessions', [SessionController::class, 'sessionIndex'])
         ->middleware('verified')
         ->name('sessions.index');
+    
+    Route::get('/sessiosn/create', [SessionController::class, 'sessionCreate'])
+        ->middleware('verified')
+        ->name('sessions.create');
 
     // Resource Management (ResourceController)
     Route::get('/resources', [ResourceController::class, 'resourceIndex'])
@@ -69,6 +73,8 @@ Route::middleware('auth')->group(function () {
     // invite status routes
     Route::post('/resources/{resource}/accept', [ResourceUserController::class, 'acceptInvite'])->name('resources.invitations.accept');
     Route::post('/resources/{resource}/decline', [ResourceUserController::class, 'declineInvite'])->name('resources.invitations.decline');
+
+
 });
 
 require __DIR__ . '/auth.php';
