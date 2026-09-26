@@ -14,4 +14,8 @@ class SessionController extends Controller
     public function sessionCreate(){
         return Inertia::render('Sessions/SessionCreate');
     }
+
+    public function studycreate(){
+        
+    }
 }

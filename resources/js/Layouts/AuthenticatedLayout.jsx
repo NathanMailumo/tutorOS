@@ -488,7 +488,7 @@ export default function AuthenticatedLayout({ children, resources }) {
                     </div>
                 </div>
             </aside>
-            <main className="ml-0 min-h-screen w-full overflow-x-hidden pt-14 md:ml-64 md:pt-0">
+            <main className="ml-0 min-h-full w-full overflow-x-hidden pt-14 md:ml-64 md:w-[calc(100%-16rem)] md:pt-0">
                 {children}
             </main>
 
