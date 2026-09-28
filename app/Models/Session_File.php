@@ -9,9 +9,12 @@ class Session_File extends Model
     protected $table = 'session_files';
 
     protected $fillable = [
-        'session_id',
-        'reference',
-        'metadata',
-        'extraction_status'
+        'study_session_id',
+        'file_name',
+        'file_path',
+        'file_type',
+        'file_size',
+        'extracted_text',
+
     ];
 }

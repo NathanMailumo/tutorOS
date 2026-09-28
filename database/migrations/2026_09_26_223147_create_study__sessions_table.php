@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('study__sessions', function (Blueprint $table) {
+        Schema::create('study_sessions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDeleteDelete();
-            $table->enum('input_mode', ['text', 'file']);
-            $table->string('content');
-            $table->string('generated_output');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('course_title');
+            $table->string('course_code')->nullable();
+            $table->enum('input_option', ['text', 'file']);
+            // $table->string('file')->nullable();
+            $table->string('focus_prompt');
+            $table->longText('raw_notes')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('study__sessions');
+        Schema::dropIfExists('study_sessions');
     }
 };

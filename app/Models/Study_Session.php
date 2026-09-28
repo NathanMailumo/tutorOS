@@ -10,8 +10,11 @@ class Study_Session extends Model
 
     protected $fillable = [
         'user_id',
+        'course_title',
+        'course_code',
         'input_option',
-        'content',
-        'generated_output',
+        'focus_prompt',
+        // 'file',
+        'raw_notes',
     ];
 }

@@ -8,11 +8,9 @@ export default function SessionCreate() {
     const { data, setData, post, processing, errors } = useForm({
         course_title: '',
         course_code: '',
-        topics: '',
-        resource_type: 'file', // 'file' or 'text'
+        input_option: 'text', // 'file' or 'text'
         file: null,
-        raw_notes: '',
-        include_quiz: true,
+        focus_prompt: '',
     });
 
     const handleSubmit = (e) => {
@@ -35,7 +33,7 @@ export default function SessionCreate() {
                         </h1>
                         <p className="mt-1 text-xs font-medium text-gray-500 sm:text-sm">
                             Select an input method to generate your study
-                            materials and interactive quiz.
+                            materials.
                         </p>
                     </div>
 
@@ -43,18 +41,24 @@ export default function SessionCreate() {
                     <div className="grid grid-cols-2 gap-2 rounded-xl border-2 border-black bg-white p-1.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                         <button
                             type="button"
-                            onClick={() => setMode('topics')}
+                            onClick={() => {
+                                setMode('topics');
+                                setData('input_option', 'text');
+                            }}
                             className={`rounded-lg border-2 px-3 py-2 text-xs font-black transition-all sm:text-sm ${
                                 mode === 'topics'
                                     ? 'border-black bg-[#FF6B35] text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                                     : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-black'
                             }`}
                         >
-                            Course & Topics
+                            Prompt & Topics
                         </button>
                         <button
                             type="button"
-                            onClick={() => setMode('resource')}
+                            onClick={() => {
+                                setMode('resource');
+                                setData('input_option', 'file');
+                            }}
                             className={`rounded-lg border-2 px-3 py-2 text-xs font-black transition-all sm:text-sm ${
                                 mode === 'resource'
                                     ? 'border-black bg-[#FF6B35] text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
@@ -70,6 +74,13 @@ export default function SessionCreate() {
                         onSubmit={handleSubmit}
                         className="space-y-5 rounded-2xl border-2 border-black bg-white p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:p-7"
                     >
+                        {/* MODE INSTRUCTION SUBTEXT */}
+                        <p className="text-xs font-bold italic text-gray-600">
+                            {mode === 'topics'
+                                ? 'dont have any materials?... generate sessions without importing study materials'
+                                : 'import study materials with content specifics to generate study materials'}
+                        </p>
+
                         {/* COURSE IDENTIFICATION */}
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="space-y-1 sm:col-span-2">
@@ -79,7 +90,7 @@ export default function SessionCreate() {
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="e.g., Data Structures and Algorithms"
+                                    placeholder="e.g... Data Structures and Algorithms"
                                     value={data.course_title}
                                     onChange={(e) =>
                                         setData('course_title', e.target.value)
@@ -117,130 +128,123 @@ export default function SessionCreate() {
 
                         {/* DYNAMIC CONTENT INPUT */}
                         {mode === 'topics' ? (
+                            /* PROMPT & TOPICS MODE */
                             <div className="space-y-1">
                                 <label className="block text-[11px] font-black uppercase tracking-wide text-black sm:text-xs">
-                                    Topics or Curriculum Outline{' '}
+                                    Study Directives & Topics Outline{' '}
                                     <span className="text-[#FF6B35]">*</span>
                                 </label>
                                 <textarea
-                                    rows={4}
-                                    placeholder="List your topics or syllabus concepts..."
-                                    value={data.topics}
+                                    rows={5}
+                                    placeholder="List topics or concepts to focus on..."
+                                    value={data.focus_prompt}
                                     onChange={(e) =>
-                                        setData('topics', e.target.value)
+                                        setData('focus_prompt', e.target.value)
                                     }
                                     className="w-full rounded-lg border-2 border-black bg-gray-50 p-3 text-xs font-bold text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:outline-none focus:ring-0 sm:text-sm"
                                     required
                                 />
-                                {errors.topics && (
+                                {errors.focus_prompt && (
                                     <p className="text-xs font-bold text-red-600">
-                                        {errors.topics}
+                                        {errors.focus_prompt}
                                     </p>
                                 )}
                             </div>
                         ) : (
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
+                            /* IMPORT MATERIAL MODE */
+                            <div className="space-y-4">
+                                <div className="space-y-1">
                                     <label className="block text-[11px] font-black uppercase tracking-wide text-black sm:text-xs">
-                                        Source Content
+                                        Source Document{' '}
+                                        <span className="text-[#FF6B35]">
+                                            *
+                                        </span>
                                     </label>
-                                    <div className="flex gap-1.5">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setData('resource_type', 'file')
-                                            }
-                                            className={`rounded-md border-2 px-2.5 py-0.5 text-[11px] font-black ${
-                                                data.resource_type === 'file'
-                                                    ? 'border-black bg-[#FF6B35] text-white'
-                                                    : 'border-black bg-white text-black'
-                                            }`}
-                                        >
-                                            Upload File
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setData('resource_type', 'text')
-                                            }
-                                            className={`rounded-md border-2 px-2.5 py-0.5 text-[11px] font-black ${
-                                                data.resource_type === 'text'
-                                                    ? 'border-black bg-[#FF6B35] text-white'
-                                                    : 'border-black bg-white text-black'
-                                            }`}
-                                        >
-                                            Paste Text
-                                        </button>
+                                    <div className="relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-black bg-gray-50 p-5 text-center transition-colors hover:bg-gray-100">
+                                        {data.file ? (
+                                            <div className="z-10 flex flex-col items-center gap-2">
+                                                <p className="text-xs font-black text-black">
+                                                    {data.file.name}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setData('file', null);
+                                                    }}
+                                                    className="rounded border border-black bg-red-500 px-2 py-0.5 text-[10px] font-black text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600"
+                                                >
+                                                    Remove File
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <p className="text-xs font-black text-black">
+                                                    Click to select or drop
+                                                    document here
+                                                </p>
+                                                <p className="mt-0.5 text-[10px] font-bold text-gray-500">
+                                                    PDF, TXT, or DOCX (Max 5MB)
+                                                </p>
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,.txt,.docx"
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'file',
+                                                            e.target.files[0],
+                                                        )
+                                                    }
+                                                    className="absolute inset-0 cursor-pointer opacity-0"
+                                                />
+                                            </>
+                                        )}
                                     </div>
+                                    {errors.file && (
+                                        <p className="text-xs font-bold text-red-600">
+                                            {errors.file}
+                                        </p>
+                                    )}
                                 </div>
 
-                                {data.resource_type === 'file' ? (
-                                    <div className="relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-black bg-gray-50 p-5 text-center transition-colors hover:bg-gray-100">
-                                        <p className="text-xs font-black text-black">
-                                            {data.file
-                                                ? data.file.name
-                                                : 'Click to select or drop document here'}
-                                        </p>
-                                        <p className="mt-0.5 text-[10px] font-bold text-gray-500">
-                                            PDF, TXT, or DOCX (Max 10MB)
-                                        </p>
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.txt,.docx"
-                                            onChange={(e) =>
-                                                setData(
-                                                    'file',
-                                                    e.target.files[0],
-                                                )
-                                            }
-                                            className="absolute inset-0 cursor-pointer opacity-0"
-                                        />
-                                    </div>
-                                ) : (
-                                    <textarea
-                                        rows={4}
-                                        placeholder="Paste notes, raw text, or lecture content..."
-                                        value={data.raw_notes}
+                                {/* SPECIFIC FOCUS UNBOXED INPUT */}
+                                <div className="space-y-1">
+                                    <label
+                                        htmlFor="focus_prompt"
+                                        className="block text-[11px] font-black uppercase tracking-wide text-black sm:text-xs"
+                                    >
+                                        Specific Focus / Target Area{' '}
+                                        <span className="text-[10px] font-normal text-gray-500">
+                                            (Optional)
+                                        </span>
+                                    </label>
+                                    <input
+                                        id="focus_prompt"
+                                        type="text"
+                                        placeholder="List specific areas from imported files"
+                                        value={data.focus_prompt}
                                         onChange={(e) =>
-                                            setData('raw_notes', e.target.value)
+                                            setData(
+                                                'focus_prompt',
+                                                e.target.value,
+                                            )
                                         }
-                                        className="w-full rounded-lg border-2 border-black bg-gray-50 p-3 text-xs font-bold text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:outline-none focus:ring-0 sm:text-sm"
+                                        className="w-full rounded-lg border-2 border-black bg-gray-50 px-3 py-2 text-xs font-bold text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:outline-none focus:ring-0 sm:text-sm"
                                     />
-                                )}
+                                </div>
                             </div>
                         )}
 
-                        {/* OPTIONS & SUBMIT */}
-                        <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="checkbox"
-                                    id="include_quiz"
-                                    checked={data.include_quiz}
-                                    onChange={(e) =>
-                                        setData(
-                                            'include_quiz',
-                                            e.target.checked,
-                                        )
-                                    }
-                                    className="h-4 w-4 cursor-pointer rounded border-2 border-black text-[#FF6B35] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] focus:ring-0"
-                                />
-                                <label
-                                    htmlFor="include_quiz"
-                                    className="cursor-pointer text-xs font-black text-black"
-                                >
-                                    Include interactive quiz
-                                </label>
-                            </div>
-
+                        {/* SUBMIT BUTTON */}
+                        <div className="pt-2">
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="inline-flex items-center justify-center rounded-xl border-2 border-black bg-[#FF6B35] px-5 py-2.5 text-xs font-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50 sm:text-sm"
+                                className="inline-flex w-full items-center justify-center rounded-xl border-2 border-black bg-[#FF6B35] px-5 py-3 text-xs font-black uppercase tracking-wider text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50 sm:text-sm"
                             >
                                 {processing
-                                    ? 'Generating...'
-                                    : 'Generate Session'}
+                                    ? 'Generating Study Workspace...'
+                                    : 'Generate Study Workspace'}
                             </button>
                         </div>
                     </form>
