@@ -12,6 +12,9 @@ use PhpOffice\PhpWord\IOFactory as WordFactory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpPresentation\IOFactory as PresentationFactory;
+use Illuminate\Support\Arr;
+use App\Services\NvidiaLlamaService;
+use App\Models\Session_Output;
 
 class SessionController extends Controller
 {
@@ -100,7 +103,7 @@ class SessionController extends Controller
     }
 
 
-    public function studycreate(Request $request)
+    public function studycreate(Request $request, NvidiaLlamaService $aiService)
     {
         $incomingFields = $request->validate([
             'course_title' => 'required|string|max:255',
@@ -115,7 +118,7 @@ class SessionController extends Controller
         $incomingFields['user_id'] = Auth::id();
 
         // 3. Separate 'file' array key so study_sessions isn't given extra fields
-        $sessionData = \Illuminate\Support\Arr::except($incomingFields, ['file']);
+        $sessionData = Arr::except($incomingFields, ['file']);
 
         // 4. Create study session
         $session = Study_Session::create($sessionData);
@@ -140,5 +143,30 @@ class SessionController extends Controller
 
             Session_File::create($fileData);
         }
+        // info passed to nvidia llama service
+        $content = ($incomingFields['input_option'] === 'file') ? $extractedText : ($incomingFields['raw_notes'] ?? '');
+        $focusPrompt = $incomingFields['focus_prompt'] ?? '';
+
+        $aiResult = $aiService->generateStudyNotes(
+            $focusPrompt,
+            $content,
+        );
+
+        Session_Output::create([
+            'study_session_id' => $session->id,
+            'content'          => $aiResult['content'] ?? 'Failed to generate study materials. Please try again.',
+            'model_used'       => $aiResult['model_used'] ?? config('services.nvidia.model'),
+            'prompt_tokens'    => $aiResult['prompt_tokens'] ?? 0,
+        ]);
+
+        // 7. Redirect to show page
+        return redirect()->route('sessions.show', $session->id);
+    }
+
+    public function session_show($id)
+    {
+        $session = Study_Session::with(['sessionFile', 'sessionOutput'])->findOrFail($id);
+
+        return Inertia::render('Sessions/SessionShow', compact('session'));
     }
 }

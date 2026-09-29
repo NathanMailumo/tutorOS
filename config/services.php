@@ -35,9 +35,10 @@ return [
         ],
     ],
 
-    'openrouter' => [
-        'api_key' => env('OPENROUTER_API_KEY'),
-        'model' => env('OPENROUTER_MODEL'),
+    'nvidia' => [
+        'api_key' => env('NVIDIA_API_KEY'),
+        'model' => env('NVIDIA_MODEL'),
+        'base_url' => 'https://integrate.api.nvidia.com/v1',
     ]
 
 ];

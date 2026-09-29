@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Session_File extends Model
 {
@@ -17,4 +18,9 @@ class Session_File extends Model
         'extracted_text',
 
     ];
+
+    public function study_session():BelongsTo
+    {
+        return $this->belongsTo(Study_Session::class);
+    }
 }

@@ -5,14 +5,17 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class OpenRouterService{
+class NvidiaLlamaService
+{
     protected string $apiKey;
     protected string $model;
+    protected string $baseUrl;
 
     public function __construct()
     {
-        $this->apiKey = config('services.openrouter.api_key');
-        $this->model = config('services.openrouter.model');
+        $this->apiKey  = config('services.nvidia.api_key');
+        $this->model   = config('services.nvidia.model');
+        $this->baseUrl = config('services.nvidia.base_url');
     }
 
     public function generateStudyNotes(string $focusPrompt, string $content): ?array
@@ -27,15 +30,16 @@ class OpenRouterService{
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
-                'HTTP-Referer'  => config('app.url'),
-                'X-Title'       => 'TutorOS',
+                'Accept'        => 'application/json',
                 'Content-Type'  => 'application/json',
-            ])->timeout(60)->post('https://openrouter.ai/api/v1/chat/completions', [
-                'model' => $this->model,
-                'messages' => [
+            ])->timeout(60)->post("{$this->baseUrl}/chat/completions", [
+                'model'       => $this->model,
+                'messages'    => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => $userPrompt],
                 ],
+                'temperature' => 0.5,
+                'max_tokens'  => 2048,
             ]);
 
             if ($response->successful()) {
@@ -46,10 +50,10 @@ class OpenRouterService{
                 ];
             }
 
-            Log::error("OpenRouter Error Response: " . $response->body());
+            Log::error("NVIDIA API Error Response: " . $response->body());
             return null;
         } catch (\Exception $e) {
-            Log::error("OpenRouter API Exception: " . $e->getMessage());
+            Log::error("NVIDIA API Exception: " . $e->getMessage());
             return null;
         }
     }

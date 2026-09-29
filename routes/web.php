@@ -35,6 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/sessions/create', [SessionController::class, 'studycreate'])
         ->middleware('verified')
         ->name('sessions.store');
+    Route::get('/session/{id}', [SessionController::class, 'session_show'])
+        ->middleware('verified')
+        ->name('sessions.show');
 
     // Resource Management (ResourceController)
     Route::get('/resources', [ResourceController::class, 'resourceIndex'])
