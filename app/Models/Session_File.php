@@ -16,11 +16,21 @@ class Session_File extends Model
         'file_type',
         'file_size',
         'extracted_text',
-
     ];
 
-    public function study_session():BelongsTo
+    /**
+     * Get the study session that owns this file.
+     */
+    public function studySession(): BelongsTo
     {
-        return $this->belongsTo(Study_Session::class);
+        return $this->belongsTo(Study_Session::class, 'study_session_id');
+    }
+
+    /**
+     * Snake-case alias for studySession.
+     */
+    public function study_session(): BelongsTo
+    {
+        return $this->studySession();
     }
 }

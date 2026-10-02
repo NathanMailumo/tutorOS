@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('file_path');
             $table->string('file_type');
             $table->bigInteger('file_size');
-            $table->string('extracted_text')->nullable();
+            $table->longText('extracted_text')->nullable();
             // $table->string('reference');
             // $table->string('metadata');
             // $table->enum('extraction_status', ['success', 'fail']);

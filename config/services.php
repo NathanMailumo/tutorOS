@@ -35,10 +35,10 @@ return [
         ],
     ],
 
-    'nvidia' => [
-        'api_key' => env('NVIDIA_API_KEY'),
-        'model' => env('NVIDIA_MODEL'),
-        'base_url' => 'https://integrate.api.nvidia.com/v1',
+    'gemini' => [
+        'api_key' => env('GEMINI_KEY'),
+        'model' => env('GEMINI_MODEL'),
+        'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
     ]
 
 ];

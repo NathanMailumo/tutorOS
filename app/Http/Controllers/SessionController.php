@@ -13,14 +13,22 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpPresentation\IOFactory as PresentationFactory;
 use Illuminate\Support\Arr;
-use App\Services\NvidiaLlamaService;
+use App\Services\GeminiService;
 use App\Models\Session_Output;
+use App\Jobs\ProcessStudySession;
 
 class SessionController extends Controller
 {
     public function sessionIndex()
     {
-        return Inertia::render('Sessions/SessionIndex');
+        $sessions = Study_Session::where('user_id', Auth::id())
+            ->with(['sessionFile', 'sessionOutput'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Sessions/SessionIndex', [
+            'sessions' => $sessions,
+        ]);
     }
 
     public function sessionCreate()
@@ -103,7 +111,7 @@ class SessionController extends Controller
     }
 
 
-    public function studycreate(Request $request, NvidiaLlamaService $aiService)
+    public function studycreate(Request $request)
     {
         $incomingFields = $request->validate([
             'course_title' => 'required|string|max:255',
@@ -143,21 +151,9 @@ class SessionController extends Controller
 
             Session_File::create($fileData);
         }
-        // info passed to nvidia llama service
         $content = ($incomingFields['input_option'] === 'file') ? $extractedText : ($incomingFields['raw_notes'] ?? '');
-        $focusPrompt = $incomingFields['focus_prompt'] ?? '';
 
-        $aiResult = $aiService->generateStudyNotes(
-            $focusPrompt,
-            $content,
-        );
-
-        Session_Output::create([
-            'study_session_id' => $session->id,
-            'content'          => $aiResult['content'] ?? 'Failed to generate study materials. Please try again.',
-            'model_used'       => $aiResult['model_used'] ?? config('services.nvidia.model'),
-            'prompt_tokens'    => $aiResult['prompt_tokens'] ?? 0,
-        ]);
+        ProcessStudySession::dispatch($session, $content);
 
         // 7. Redirect to show page
         return redirect()->route('sessions.show', $session->id);
