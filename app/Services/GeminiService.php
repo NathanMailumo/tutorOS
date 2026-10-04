@@ -47,8 +47,9 @@ class GeminiService
             ]);
 
             if ($response->successful()) {
-                $responseText = $response->json('candidates.0.content.parts.0.text');
-                $tokenCount   = $response->json('usageMetadata.totalTokenCount') ?? 0;
+                $data = $response->json();
+                $responseText = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                $tokenCount   = $data['usageMetadata']['totalTokenCount'] ?? 0;
 
                 return [
                     'content'       => $responseText,

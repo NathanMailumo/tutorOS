@@ -38,7 +38,7 @@ return [
     'gemini' => [
         'api_key' => env('GEMINI_KEY'),
         'model' => env('GEMINI_MODEL'),
-        'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
+        'base_url' => 'https://generativelanguage.googleapis.com/v1',
     ]
 
 ];
