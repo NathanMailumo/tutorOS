@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ResourceItemController;
@@ -83,6 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/resources/{resource}/decline', [ResourceUserController::class, 'declineInvite'])->name('resources.invitations.decline');
 
 
+    // profile routes
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 });
 
 require __DIR__ . '/auth.php';
