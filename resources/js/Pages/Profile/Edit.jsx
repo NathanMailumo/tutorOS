@@ -3,18 +3,66 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 const PRESET_AVATARS = [
-    { id: 'bot-1', label: 'Cosmo Bot', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Cosmo' },
-    { id: 'bot-2', label: 'Gizmo Bot', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Gizmo' },
-    { id: 'bot-3', label: 'Spark Bot', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Circuit' },
-    { id: 'adv-1', label: 'Explorer Felix', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix' },
-    { id: 'adv-2', label: 'Explorer Maya', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Maya' },
-    { id: 'adv-3', label: 'Explorer Sam', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sammy' },
-    { id: 'per-1', label: 'Scholar Alex', url: 'https://api.dicebear.com/7.x/personas/svg?seed=Alex' },
-    { id: 'per-2', label: 'Scholar Zoe', url: 'https://api.dicebear.com/7.x/personas/svg?seed=Zoe' },
-    { id: 'per-3', label: 'Scholar Leo', url: 'https://api.dicebear.com/7.x/personas/svg?seed=Leo' },
-    { id: 'fun-1', label: 'Super Star', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Star' },
-    { id: 'fun-2', label: 'Cool Cat', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Chill' },
-    { id: 'fun-3', label: 'Sunny Joy', url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Sunny' },
+    {
+        id: 'bot-1',
+        label: 'Cosmo Bot',
+        url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Cosmo',
+    },
+    {
+        id: 'bot-2',
+        label: 'Gizmo Bot',
+        url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Gizmo',
+    },
+    {
+        id: 'bot-3',
+        label: 'Spark Bot',
+        url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Circuit',
+    },
+    {
+        id: 'adv-1',
+        label: 'Explorer Felix',
+        url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix',
+    },
+    {
+        id: 'adv-2',
+        label: 'Explorer Maya',
+        url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Maya',
+    },
+    {
+        id: 'adv-3',
+        label: 'Explorer Sam',
+        url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sammy',
+    },
+    {
+        id: 'per-1',
+        label: 'Scholar Alex',
+        url: 'https://api.dicebear.com/7.x/personas/svg?seed=Alex',
+    },
+    {
+        id: 'per-2',
+        label: 'Scholar Zoe',
+        url: 'https://api.dicebear.com/7.x/personas/svg?seed=Zoe',
+    },
+    {
+        id: 'per-3',
+        label: 'Scholar Leo',
+        url: 'https://api.dicebear.com/7.x/personas/svg?seed=Leo',
+    },
+    {
+        id: 'fun-1',
+        label: 'Super Star',
+        url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Star',
+    },
+    {
+        id: 'fun-2',
+        label: 'Cool Cat',
+        url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Chill',
+    },
+    {
+        id: 'fun-3',
+        label: 'Sunny Joy',
+        url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Sunny',
+    },
 ];
 
 export default function Edit({ mustVerifyEmail, status }) {
@@ -25,7 +73,9 @@ export default function Edit({ mustVerifyEmail, status }) {
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
     // Live preview state (file blob URL or preset avatar URL or current user image)
-    const [previewUrl, setPreviewUrl] = useState(user?.profile_image_url || null);
+    const [previewUrl, setPreviewUrl] = useState(
+        user?.profile_image_url || null,
+    );
 
     // Profile Form State
     const profileForm = useForm({
@@ -111,7 +161,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 </div>
 
                                 {/* Avatar Preview (Circular like reference image) */}
-                                <div className="relative mb-4 flex h-36 w-36 sm:h-44 sm:w-44 items-center justify-center overflow-hidden rounded-full border-4 border-black bg-[#F4F0EA] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                                <div className="relative mb-4 flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-4 border-black bg-[#F4F0EA] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:h-44 sm:w-44">
                                     {previewUrl ? (
                                         <img
                                             src={previewUrl}
@@ -120,7 +170,11 @@ export default function Edit({ mustVerifyEmail, status }) {
                                         />
                                     ) : (
                                         <span className="text-5xl font-black text-black">
-                                            {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                            {user?.name
+                                                ? user.name
+                                                      .charAt(0)
+                                                      .toUpperCase()
+                                                : 'U'}
                                         </span>
                                     )}
                                 </div>
@@ -128,7 +182,9 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 {/* User Display Info */}
                                 <div className="mb-6">
                                     <h3 className="text-lg font-black uppercase tracking-tight">
-                                        {profileForm.data.name || user?.name || 'User'}
+                                        {profileForm.data.name ||
+                                            user?.name ||
+                                            'User'}
                                     </h3>
                                     <span className="mt-1 inline-block border-2 border-black bg-red-50 px-2 py-0.5 text-[11px] font-extrabold uppercase text-[#FF5050]">
                                         TutorOS Scholar
@@ -139,7 +195,9 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 <div className="w-full space-y-3">
                                     <button
                                         type="button"
-                                        onClick={() => setIsAvatarModalOpen(true)}
+                                        onClick={() =>
+                                            setIsAvatarModalOpen(true)
+                                        }
                                         className="w-full border-4 border-black bg-[#FF5050] px-4 py-2.5 text-xs font-black uppercase text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-0.5 hover:translate-y-0.5"
                                     >
                                         Choose Avatar Preset
@@ -147,7 +205,9 @@ export default function Edit({ mustVerifyEmail, status }) {
 
                                     <button
                                         type="button"
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onClick={() =>
+                                            fileInputRef.current?.click()
+                                        }
                                         className="w-full border-4 border-black bg-white px-4 py-2.5 text-xs font-black uppercase text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-neutral-100"
                                     >
                                         Upload Photo
@@ -165,7 +225,11 @@ export default function Edit({ mustVerifyEmail, status }) {
                                     {/* Selected state indicator */}
                                     {profileForm.data.profile_image && (
                                         <div className="border-2 border-black bg-white p-2 text-center text-[11px] font-bold text-gray-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                                            File ready: {profileForm.data.profile_image.name}
+                                            File ready:{' '}
+                                            {
+                                                profileForm.data.profile_image
+                                                    .name
+                                            }
                                         </div>
                                     )}
                                     {profileForm.data.avatar_url && (
@@ -203,7 +267,10 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             type="text"
                                             value={profileForm.data.name}
                                             onChange={(e) =>
-                                                profileForm.setData('name', e.target.value)
+                                                profileForm.setData(
+                                                    'name',
+                                                    e.target.value,
+                                                )
                                             }
                                             className="w-full border-4 border-black bg-[#F4F0EA] p-3 text-sm font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
                                             required
@@ -224,7 +291,10 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             type="email"
                                             value={profileForm.data.email}
                                             onChange={(e) =>
-                                                profileForm.setData('email', e.target.value)
+                                                profileForm.setData(
+                                                    'email',
+                                                    e.target.value,
+                                                )
                                             }
                                             className="w-full border-4 border-black bg-[#F4F0EA] p-3 text-sm font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-white focus:outline-none focus:ring-2 focus:ring-black"
                                             required
@@ -243,7 +313,9 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             disabled={profileForm.processing}
                                             className="border-4 border-black bg-[#FF5050] px-8 py-3.5 text-sm font-black uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-1 hover:translate-y-1 disabled:opacity-50"
                                         >
-                                            {profileForm.processing ? 'Saving...' : 'Save Changes'}
+                                            {profileForm.processing
+                                                ? 'Saving...'
+                                                : 'Save Changes'}
                                         </button>
 
                                         {profileForm.recentlySuccessful && (
@@ -288,7 +360,9 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 <button
                                     key={avatar.id}
                                     type="button"
-                                    onClick={() => handleSelectPreset(avatar.url)}
+                                    onClick={() =>
+                                        handleSelectPreset(avatar.url)
+                                    }
                                     className="group flex flex-col items-center justify-center rounded-xl border-2 border-black bg-[#F4F0EA] p-3 text-center transition-all hover:-translate-y-1 hover:border-black hover:bg-red-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                                 >
                                     <div className="h-16 w-16 overflow-hidden rounded-full border-2 border-black bg-white p-1">
