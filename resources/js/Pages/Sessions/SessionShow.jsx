@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import 'katex/dist/katex.css';
 
 export default function SessionShow({ session }) {
     // Check if the related output exists
@@ -108,8 +111,11 @@ export default function SessionShow({ session }) {
                                 </p>
                             </div>
                         ) : (
-                            <div className="prose max-w-none font-bold">
-                                <ReactMarkdown>
+                            <div className="prose max-w-none font-bold dark:prose-invert">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkMath]}
+                                    rehypePlugins={[rehypeKatex]}
+                                >
                                     {session.session_output.content}
                                 </ReactMarkdown>
                             </div>

@@ -13,7 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpPresentation\IOFactory as PresentationFactory;
 use Illuminate\Support\Arr;
-use App\Services\GeminiService;
+use App\Services\OpenRouterService;
 use App\Models\Session_Output;
 use App\Jobs\ProcessStudySession;
 

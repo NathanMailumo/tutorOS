@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Models\Study_Session;
 use App\Models\Session_Output;
-use App\Services\GeminiService;
+use App\Services\OpenRouterService;
 
 
 class ProcessStudySession implements ShouldQueue
@@ -25,7 +25,7 @@ class ProcessStudySession implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(GeminiService $aiService): void
+    public function handle(OpenRouterService $aiService): void
     {
         $aiResult = $aiService->generateStudyNotes(
             $this->session->focus_prompt,
@@ -35,7 +35,7 @@ class ProcessStudySession implements ShouldQueue
         Session_Output::create([
             'study_session_id' => $this->session->id,
             'content'          => $aiResult['content'] ?? 'Failed to generate study materials.',
-            'model_used'       => $aiResult['model_used'] ?? config('services.gemini.model'),
+            'model_used'       => $aiResult['model_used'] ?? config('services.openrouter.model'),
             'prompt_tokens'    => $aiResult['prompt_tokens'] ?? 0,
         ]);
     }

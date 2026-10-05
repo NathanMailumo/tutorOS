@@ -35,10 +35,9 @@ return [
         ],
     ],
 
-    'gemini' => [
-        'api_key' => env('GEMINI_KEY'),
-        'model' => env('GEMINI_MODEL'),
-        'base_url' => 'https://generativelanguage.googleapis.com/v1',
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL'),
     ],
 
     'cloudinary' => [
