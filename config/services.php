@@ -39,6 +39,12 @@ return [
         'api_key' => env('GEMINI_KEY'),
         'model' => env('GEMINI_MODEL'),
         'base_url' => 'https://generativelanguage.googleapis.com/v1',
-    ]
+    ],
+
+    'cloudinary' => [
+        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+        'api_key' => env('CLOUDINARY_API_KEY'),
+        'api_secret' => env('CLOUDINARY_API_SECRET'),
+    ],
 
 ];

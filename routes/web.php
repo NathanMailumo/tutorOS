@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
 
     // profile routes
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 require __DIR__ . '/auth.php';

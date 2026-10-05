@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\CloudinaryService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,17 +28,43 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, CloudinaryService $cloudinary): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        // 1. Handle uploaded image file to Cloudinary
+        if ($request->hasFile('profile_image')) {
+            $upload = $cloudinary->uploadImage($request->file('profile_image'), 'tutorOS/avatars');
+            if ($upload) {
+                if ($user->profile_image_public_id) {
+                    $cloudinary->deleteImage($user->profile_image_public_id);
+                }
+                $user->profile_image_url = $upload['url'];
+                $user->profile_image_public_id = $upload['public_id'];
+            }
+        }
+        // 2. Handle selected avatar preset URL
+        elseif ($request->filled('avatar_url')) {
+            if ($user->profile_image_public_id) {
+                $cloudinary->deleteImage($user->profile_image_public_id);
+            }
+            $user->profile_image_url = $request->input('avatar_url');
+            $user->profile_image_public_id = null;
+        }
 
-        return Redirect::route('profile.edit');
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**

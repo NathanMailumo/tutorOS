@@ -32,7 +32,10 @@ class GeminiService
 
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->timeout(60)->post($endpoint, [
+            ])
+            ->connectTimeout(15) // Wait up to 15s to establish connection
+            ->timeout(60)       // Allow up to 120s for full response generation
+            ->post($endpoint, [
                 'contents' => [
                     [
                         'parts' => [
