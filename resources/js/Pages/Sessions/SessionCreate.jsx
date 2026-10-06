@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function SessionCreate() {
+export default function SessionCreate({ resourceId = null }) {
     const [mode, setMode] = useState('topics'); // 'topics' or 'resource'
 
     const { data, setData, post, processing, errors } = useForm({
@@ -11,6 +11,7 @@ export default function SessionCreate() {
         input_option: 'text', // 'file' or 'text'
         file: null,
         focus_prompt: '',
+        resource_id: resourceId,
     });
 
     const handleSubmit = (e) => {

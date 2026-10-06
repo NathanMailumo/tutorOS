@@ -13,9 +13,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpPresentation\IOFactory as PresentationFactory;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use App\Services\OpenRouterService;
 use App\Models\Session_Output;
 use App\Jobs\ProcessStudySession;
+use App\Models\Resource;
+use App\Models\ResourceItem;
 
 class SessionController extends Controller
 {
@@ -31,9 +34,36 @@ class SessionController extends Controller
         ]);
     }
 
-    public function sessionCreate()
+    public function sessionCreate(Request $request)
     {
-        return Inertia::render('Sessions/SessionCreate');
+        $resourceId = $request->integer('resource_id') ?: null;
+
+        if ($resourceId) {
+            $this->accessibleResource($resourceId);
+        }
+
+        return Inertia::render('Sessions/SessionCreate', [
+            'resourceId' => $resourceId,
+        ]);
+    }
+
+    private function accessibleResource(?int $resourceId): ?Resource
+    {
+        if (!$resourceId) {
+            return null;
+        }
+
+        $resource = Resource::findOrFail($resourceId);
+        $userId = Auth::id();
+
+        $hasAccess = $resource->user_id === $userId
+            || $resource->collaborators()
+                ->where('user_id', $userId)
+                ->exists();
+
+        abort_unless($hasAccess, 403, 'You do not have access to this workspace.');
+
+        return $resource;
     }
 
     private function extractTextFromFile(UploadedFile $file): string
@@ -119,17 +149,32 @@ class SessionController extends Controller
             'input_option' => 'required|in:text,file',
             'raw_notes' => 'nullable|string',
             'focus_prompt' => 'required|string',
+            'resource_id' => 'nullable|integer|exists:resources,id',
             // Update validation rule to allow pptx
             'file' => 'required_if:input_option,file|nullable|file|mimes:pdf,docx,txt,pptx|max:5120',
         ]);
 
         $incomingFields['user_id'] = Auth::id();
+        $resource = $this->accessibleResource($incomingFields['resource_id'] ?? null);
 
-        // 3. Separate 'file' array key so study_sessions isn't given extra fields
         $sessionData = Arr::except($incomingFields, ['file']);
 
-        // 4. Create study session
-        $session = Study_Session::create($sessionData);
+        $session = DB::transaction(function () use ($sessionData, $resource) {
+            $session = Study_Session::create($sessionData);
+
+            if ($resource) {
+                ResourceItem::create([
+                    'user_id' => Auth::id(),
+                    'resource_id' => $resource->id,
+                    'study_session_id' => $session->id,
+                    'type' => 'revision',
+                    'title' => $session->course_title . ' Revision Pack',
+                    'description' => 'Generated study session',
+                ]);
+            }
+
+            return $session;
+        });
 
         $extractedText = '';
 
@@ -161,7 +206,11 @@ class SessionController extends Controller
 
     public function session_show($id)
     {
-        $session = Study_Session::with(['sessionFile', 'sessionOutput'])->findOrFail($id);
+        $session = Study_Session::with([
+            'sessionFile',
+            'sessionOutput',
+            'resource',
+        ])->findOrFail($id);
 
         return Inertia::render('Sessions/SessionShow', compact('session'));
     }

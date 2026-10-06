@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ResourceItemModal from '@/Components/ResourceItemModal';
 
@@ -146,8 +147,13 @@ export default function PrivateResource({ resource, items = [] }) {
 
             case 'revision':
                 return (
-                    <div
+                    <Link
                         key={item.id}
+                        href={
+                            item.study_session_id
+                                ? route('sessions.show', item.study_session_id)
+                                : '#'
+                        }
                         className="flex flex-col justify-between rounded-xl border-2 border-black bg-white p-4 text-[#121212] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
                         <div>
@@ -165,8 +171,11 @@ export default function PrivateResource({ resource, items = [] }) {
                                     {item.content}
                                 </p>
                             )}
+                            <p className="mt-2 text-xs font-bold text-blue-600">
+                                Open session →
+                            </p>
                         </div>
-                    </div>
+                    </Link>
                 );
 
             case 'note':

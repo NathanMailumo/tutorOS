@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Study_Session;
 
 class Resource extends Model
 {
@@ -16,6 +17,7 @@ class Resource extends Model
     protected $fillable = [
         'course_name',
         'user_id',
+        // 'study_session_id',
         'resource_type',
     ];
 
@@ -36,10 +38,15 @@ class Resource extends Model
      * Get the collaborators invited to this resource workspace.
      */
     public function collaborators(): BelongsToMany
-{
-    // Explicitly set table name to 'resource_users'
-    return $this->belongsToMany(User::class, 'resource_users')
-        ->withPivot(['role', 'status'])
-        ->withTimestamps();
-}
+    {
+        // Explicitly set table name to 'resource_users'
+        return $this->belongsToMany(User::class, 'resource_users')
+            ->withPivot(['role', 'status'])
+            ->withTimestamps();
+    }
+
+    public function studySessions():HasMany
+    {
+        return $this->hasMany(Study_Session::class);
+    }
 }

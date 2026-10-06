@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Resource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Study_Session;
 
 
 class ResourceItem extends Model
@@ -15,6 +16,7 @@ class ResourceItem extends Model
     protected $fillable = [
         'user_id',
         'resource_id',
+        'study_session_id',
         'type',
         'title',
         'url',
@@ -38,5 +40,10 @@ class ResourceItem extends Model
     public function resource(): BelongsTo
     {
         return $this->belongsTo(Resource::class);
+    }
+
+    public function studySession(): BelongsTo
+    {
+        return $this->belongsTo(Study_Session::class);
     }
 }

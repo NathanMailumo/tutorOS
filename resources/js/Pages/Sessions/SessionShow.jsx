@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
@@ -7,14 +7,25 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import 'katex/dist/katex.css';
 
 export default function SessionShow({ session }) {
-    // Check if the related output exists
-    const hasOutput = Boolean(session?.session_output);
+    const GENERATION_TIMEOUT_MS = 150000;
+    const FAILED_OUTPUT = 'Failed to generate study materials.';
+    const outputContent = session?.session_output?.content?.trim() || '';
+    const hasOutput = Boolean(outputContent && outputContent !== FAILED_OUTPUT);
+    const [generationFailed, setGenerationFailed] = useState(
+        outputContent === FAILED_OUTPUT,
+    );
 
     useEffect(() => {
-        // If output is already loaded, do nothing
-        if (hasOutput) return;
+        if (hasOutput || generationFailed) return;
 
-        // Poll every 3 seconds until session_output appears in DB
+        const createdAt = Date.parse(session?.created_at || '');
+        const elapsed = Number.isNaN(createdAt) ? 0 : Date.now() - createdAt;
+        const remainingTime = Math.max(GENERATION_TIMEOUT_MS - elapsed, 0);
+
+        const timeout = setTimeout(() => {
+            setGenerationFailed(true);
+        }, remainingTime);
+
         const interval = setInterval(() => {
             router.reload({
                 only: ['session'],
@@ -22,8 +33,13 @@ export default function SessionShow({ session }) {
             });
         }, 3000);
 
-        return () => clearInterval(interval);
-    }, [hasOutput]);
+        return () => {
+            clearTimeout(timeout);
+            clearInterval(interval);
+        };
+    }, [generationFailed, hasOutput, session?.created_at]);
+
+    const showFailedState = generationFailed || outputContent === FAILED_OUTPUT;
 
     return (
         <AuthenticatedLayout>
@@ -42,10 +58,20 @@ export default function SessionShow({ session }) {
                             </h1>
                         </div>
                         <Link
-                            href="/dashboard"
+                            href={
+                                session.resource_id
+                                    ? route(
+                                          'resources.show',
+                                          session.resource_id,
+                                      )
+                                    : '/dashboard'
+                            }
                             className="border-4 border-black bg-[#FF5050] px-6 py-3 font-extrabold uppercase text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                         >
-                            ← Back to Dashboard
+                            ←{' '}
+                            {session.resource_id
+                                ? 'Back to Resource'
+                                : 'Back to Dashboard'}
                         </Link>
                     </div>
 
@@ -98,7 +124,18 @@ export default function SessionShow({ session }) {
                             )}
                         </div>
 
-                        {!hasOutput ? (
+                        {showFailedState ? (
+                            <div className="space-y-4 py-12 text-center">
+                                <div className="text-4xl">⚠️</div>
+                                <p className="text-lg font-extrabold uppercase">
+                                    Failed to generate study materials.
+                                </p>
+                                <p className="text-xs font-bold text-gray-500">
+                                    The generation request timed out or did not
+                                    return an output.
+                                </p>
+                            </div>
+                        ) : !hasOutput ? (
                             <div className="space-y-4 py-12 text-center">
                                 <div className="inline-block animate-bounce text-4xl">
                                     ⚡
@@ -116,7 +153,7 @@ export default function SessionShow({ session }) {
                                     remarkPlugins={[remarkMath]}
                                     rehypePlugins={[rehypeKatex]}
                                 >
-                                    {session.session_output.content}
+                                    {outputContent}
                                 </ReactMarkdown>
                             </div>
                         )}

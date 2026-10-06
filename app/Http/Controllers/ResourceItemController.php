@@ -107,7 +107,7 @@ class ResourceItemController extends Controller
 
         return Inertia::render('Resources/PrivateResource', [
             'resource' => $resource,
-            'items'    => $resource->items,
+            'items'    => $resource->resourceItems,
         ]);
     }
 }

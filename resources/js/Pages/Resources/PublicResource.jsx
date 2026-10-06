@@ -150,8 +150,13 @@ export default function PublicResource({
 
             case 'revision':
                 return (
-                    <div
+                    <Link
                         key={item.id}
+                        href={
+                            item.study_session_id
+                                ? route('sessions.show', item.study_session_id)
+                                : '#'
+                        }
                         className="flex flex-col justify-between rounded-xl border-2 border-black bg-white p-4 text-[#121212] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
                         <div>
@@ -164,13 +169,11 @@ export default function PublicResource({
                             <h3 className="mt-2 text-sm font-bold leading-snug">
                                 {item.title}
                             </h3>
-                            {item.content && (
-                                <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-gray-600">
-                                    {item.content}
-                                </p>
-                            )}
+                            <p className="mt-2 text-xs font-bold text-blue-600">
+                                Open session →
+                            </p>
                         </div>
-                    </div>
+                    </Link>
                 );
 
             case 'note':
@@ -272,13 +275,14 @@ export default function PublicResource({
                         >
                             + Formula
                         </button>
-                        <button
-                            type="button"
-                            onClick={() => openAddModal('revision')}
+                        <Link
+                            href={route('sessions.create', {
+                                resource_id: resource?.id,
+                            })}
                             className="rounded-lg border-2 border-black bg-white px-2.5 py-1 text-xs font-black text-[#121212] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
                         >
                             + Revision
-                        </button>
+                        </Link>
                         <button
                             type="button"
                             onClick={() => openAddModal('note')}

@@ -1,5 +1,7 @@
 <?php
 
+// use App\Models\ResourceItem;
+// use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +22,7 @@ return new class extends Migration
             // $table->string('file')->nullable();
             $table->string('focus_prompt');
             $table->longText('raw_notes')->nullable();
+            $table->foreignId('resource_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }
@@ -31,4 +34,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('study_sessions');
     }
+
+    
 };

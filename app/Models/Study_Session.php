@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Session_File;
 use App\Models\Session_Output;
+use App\Models\ResourceItem;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Resource;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Study_Session extends Model
 {
@@ -17,7 +21,7 @@ class Study_Session extends Model
         'course_code',
         'input_option',
         'focus_prompt',
-        // 'file',
+        'resource_id',
         'raw_notes',
     ];
 
@@ -39,8 +43,14 @@ class Study_Session extends Model
         return $this->hasOne(Session_Output::class, 'study_session_id');
     }
 
-    // public function session_output(): HasOne
-    // {
-    //     return $this->sessionOutput();
-    // }
+    public function resource(): BelongsTo
+    {
+        return $this->belongsTo(Resource::class);
+    }
+
+    public function revisionPack(): HasOne
+    {
+        return $this->hasOne(ResourceItem::class, 'study_session_id')
+            ->where('type', 'revision');
+    }
 }

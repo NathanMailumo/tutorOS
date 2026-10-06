@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('course_name');
             $table->foreignId('user_id');
-            // $table->string('resource_name');
+            // $table->foreignId('study_session_id');
             $table->enum('resource_type', ['private', 'public']);
             $table->timestamps();
         });

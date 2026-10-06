@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('resource_id')->constrained()->onDelete('cascade');
+            $table->foreignId('study_session_id')->nullable()->constrained()->nullOnDelete();
 
-            // Resource Categorization
-            // Types: 'link', 'video', 'formula', 'revision', 'note'
             $table->enum('type', ['video', 'link', 'formula', 'revision', 'note']); 
 
             // Primary Content Fields
