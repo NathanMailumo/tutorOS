@@ -6,6 +6,7 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ResourceItemController;
 use App\Http\Controllers\ResourceUserController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -87,6 +88,9 @@ Route::middleware('auth')->group(function () {
     // profile routes
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // settings route
+    Route::get('/settings', [SettingController::class, 'showSettings'])->name('settings');
 });
 
 require __DIR__ . '/auth.php';

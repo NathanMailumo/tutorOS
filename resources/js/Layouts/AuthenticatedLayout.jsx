@@ -84,7 +84,7 @@ export default function AuthenticatedLayout({ children, resources }) {
                                 ? route('profile.edit')
                                 : '#'
                         }
-                        className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-purple-600 text-xs font-bold text-white shadow-sm border border-neutral-700"
+                        className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-neutral-700 bg-purple-600 text-xs font-bold text-white shadow-sm"
                         title={user?.name || 'Profile'}
                     >
                         {user?.profile_image_url ? (
@@ -93,8 +93,10 @@ export default function AuthenticatedLayout({ children, resources }) {
                                 alt={user.name}
                                 className="h-full w-full object-cover"
                             />
+                        ) : user?.name ? (
+                            user.name.charAt(0).toUpperCase()
                         ) : (
-                            user?.name ? user.name.charAt(0).toUpperCase() : 'U'
+                            'U'
                         )}
                     </Link>
                 </div>
@@ -461,17 +463,17 @@ export default function AuthenticatedLayout({ children, resources }) {
                             }
                             className="flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-md bg-purple-600 text-[10px] font-bold text-white border border-neutral-700">
+                            <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-md border border-neutral-700 bg-purple-600 text-[10px] font-bold text-white">
                                 {user?.profile_image_url ? (
                                     <img
                                         src={user.profile_image_url}
                                         alt={user.name}
                                         className="h-full w-full object-cover"
                                     />
+                                ) : user?.name ? (
+                                    user.name.charAt(0).toUpperCase()
                                 ) : (
-                                    user?.name
-                                        ? user.name.charAt(0).toUpperCase()
-                                        : 'U'
+                                    'U'
                                 )}
                             </div>
                             <span className="truncate text-xs text-gray-300">
