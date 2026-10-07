@@ -1,15 +1,44 @@
 import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ResourceItemModal from '@/Components/ResourceItemModal';
+import YouTubePickerModal from '@/Components/YoutubePickerModal';
 
 export default function PrivateResource({ resource, items = [] }) {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [activeAddType, setActiveAddType] = useState(null);
 
+    const [isYtModalOpen, setIsYtModalOpen] = useState(false);
+
     const openAddModal = (type = 'note') => {
         setActiveAddType(type);
         setIsAddModalOpen(true);
+    };
+
+    // save handler for youtube section
+    const handleSaveVideo = (video) => {
+        router.post(
+            typeof route === 'function'
+                ? route('resource-items.store')
+                : '/resource-items',
+            {
+                resource_id: resource.id,
+                type: 'video',
+                title: video.title,
+                url: video.url,
+                description: `Channel: ${video.uploader}`,
+                metadata: {
+                    thumbnail_url: video.thumbnail,
+                    author_name: video.uploader,
+                },
+            },
+            {
+                onSuccess: () => setIsYtModalOpen(false),
+                onError: (errors) => {
+                    console.error('Failed to save YouTube resource:', errors);
+                },
+            },
+        );
     };
 
     // Card Template Renderer
@@ -159,18 +188,13 @@ export default function PrivateResource({ resource, items = [] }) {
                         <div>
                             <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-blue-600">
                                 <span className="flex h-5 w-5 items-center justify-center rounded bg-blue-100">
-                                    📖
+                                    📋
                                 </span>
                                 Revision Pack
                             </div>
                             <h3 className="mt-2 text-sm font-bold leading-snug">
                                 {item.title}
                             </h3>
-                            {item.content && (
-                                <p className="mt-2 whitespace-pre-line text-xs leading-relaxed text-gray-600">
-                                    {item.content}
-                                </p>
-                            )}
                             <p className="mt-2 text-xs font-bold text-blue-600">
                                 Open session →
                             </p>
@@ -241,7 +265,7 @@ export default function PrivateResource({ resource, items = [] }) {
                         </button>
                         <button
                             type="button"
-                            onClick={() => openAddModal('video')}
+                            onClick={() => setIsYtModalOpen(true)}
                             className="rounded-lg border-2 border-black bg-white px-2.5 py-1 text-xs font-black text-[#121212] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
                         >
                             + Video
@@ -253,13 +277,14 @@ export default function PrivateResource({ resource, items = [] }) {
                         >
                             + Formula
                         </button>
-                        <button
-                            type="button"
-                            onClick={() => openAddModal('revision')}
+                        <Link
+                            href={route('sessions.create', {
+                                resource_id: resource?.id,
+                            })}
                             className="rounded-lg border-2 border-black bg-white px-2.5 py-1 text-xs font-black text-[#121212] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
                         >
                             + Revision
-                        </button>
+                        </Link>
                         <button
                             type="button"
                             onClick={() => openAddModal('note')}
@@ -326,6 +351,11 @@ export default function PrivateResource({ resource, items = [] }) {
                 onClose={() => setIsAddModalOpen(false)}
                 resourceId={resource?.id}
                 defaultType={activeAddType || 'note'}
+            />
+            <YouTubePickerModal
+                isOpen={isYtModalOpen}
+                onClose={() => setIsYtModalOpen(false)}
+                onSelectVideo={handleSaveVideo}
             />
         </AuthenticatedLayout>
     );

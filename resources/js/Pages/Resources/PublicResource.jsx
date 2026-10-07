@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ResourceItemModal from '@/Components/ResourceItemModal';
 import InviteModal from '@/Components/Invite';
+import YouTubePickerModal from '@/Components/YoutubePickerModal';
 
 export default function PublicResource({
     resource,
@@ -13,9 +14,29 @@ export default function PublicResource({
     const [activeAddType, setActiveAddType] = useState(null);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
+    const [isYtModalOpen, setIsYtModalOpen] = useState(false);
+
     const openAddModal = (type = 'note') => {
         setActiveAddType(type);
         setIsAddModalOpen(true);
+    };
+
+    const handleSaveVideo = (video) => {
+        router.post(
+            typeof route === 'function'
+                ? route('resource-items.store')
+                : '/resource-items',
+            {
+                resource_id: resource.id,
+                type: 'video',
+                title: video.title,
+                url: video.url,
+                description: `Channel: ${video.uploader}`,
+            },
+            {
+                onSuccess: () => setIsYtModalOpen(false),
+            },
+        );
     };
 
     const renderCard = (item) => {
@@ -263,7 +284,7 @@ export default function PublicResource({
                         </button>
                         <button
                             type="button"
-                            onClick={() => openAddModal('video')}
+                            onClick={() => setIsYtModalOpen(true)}
                             className="rounded-lg border-2 border-black bg-white px-2.5 py-1 text-xs font-black text-[#121212] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
                         >
                             + Video
@@ -341,6 +362,11 @@ export default function PublicResource({
                 onClose={() => setIsAddModalOpen(false)}
                 resourceId={resource?.id}
                 defaultType={activeAddType || 'note'}
+            />
+            <YouTubePickerModal
+                isOpen={isYtModalOpen}
+                onClose={() => setIsYtModalOpen(false)}
+                onSelectVideo={handleSaveVideo}
             />
 
             {/* INVITE MODAL FOR OWNER */}

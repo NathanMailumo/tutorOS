@@ -7,7 +7,6 @@ export default function ResourceItemModal({
     resourceId,
     defaultType,
 }) {
-    // Dynamic array for multiple formulas
     const [formulas, setFormulas] = useState(['']);
 
     const { data, setData, post, processing, errors, reset, clearErrors } =
@@ -20,7 +19,6 @@ export default function ResourceItemModal({
             description: '',
         });
 
-    // Keep internal state updated when modal opens or props change
     useEffect(() => {
         if (isOpen) {
             setData((prev) => ({
@@ -42,7 +40,6 @@ export default function ResourceItemModal({
         onClose();
     };
 
-    // Dynamic Formula Handlers (Pure state updates without async race conditions)
     const handleFormulaChange = (index, value) => {
         const updated = [...formulas];
         updated[index] = value;
@@ -61,7 +58,6 @@ export default function ResourceItemModal({
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Calculate and serialize formulas right at submit time
         const formattedContent =
             data.type === 'formula'
                 ? formulas.filter((f) => f.trim() !== '').join('\n')
@@ -83,13 +79,12 @@ export default function ResourceItemModal({
 
     if (!isOpen) return null;
 
-    // Theme variations per modal type
     const isStickyNote = data.type === 'note';
     const isFormula = data.type === 'formula';
+    const isLink = data.type === 'link';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-            {/* CONTAINER WITH THEME STYLES */}
             <div
                 className={`w-full max-w-md rounded-2xl border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${
                     isStickyNote
@@ -101,15 +96,18 @@ export default function ResourceItemModal({
                 <div className="flex items-center justify-between border-b-2 border-black pb-3">
                     <div className="flex items-center gap-2">
                         <span className="text-lg">
-                            {data.type === 'video' && '▶'}
-                            {data.type === 'link' && '🔗'}
-                            {data.type === 'formula' && 'ƒ'}
+                            {isLink && '🔗'}
+                            {isFormula && 'ƒ'}
                             {data.type === 'revision' && '📖'}
-                            {data.type === 'note' && '📌'}
+                            {isStickyNote && '📌'}
                         </span>
                         <h2 className="text-base font-black capitalize">
                             Add{' '}
-                            {data.type === 'note' ? 'Sticky Note' : data.type}
+                            {isStickyNote
+                                ? 'Sticky Note'
+                                : isLink
+                                  ? 'Web Link'
+                                  : data.type}
                         </h2>
                     </div>
                     <button
@@ -121,24 +119,18 @@ export default function ResourceItemModal({
                     </button>
                 </div>
 
-                {/* FORM CONTENT */}
+                {/* FORM CONTENT (For Link, Note, Formula, Revision) */}
                 <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-                    {/* URL INPUT (For Videos and Links) */}
-                    {(data.type === 'video' || data.type === 'link') && (
+                    {/* WEB LINK URL INPUT */}
+                    {isLink && (
                         <div>
                             <label className="block text-xs font-black uppercase text-gray-700">
-                                {data.type === 'video'
-                                    ? 'YouTube URL'
-                                    : 'Web Link URL'}
+                                Web Link URL
                             </label>
                             <input
                                 type="url"
                                 required
-                                placeholder={
-                                    data.type === 'video'
-                                        ? 'https://www.youtube.com/watch?v=...'
-                                        : 'https://example.com'
-                                }
+                                placeholder="https://example.com/article"
                                 value={data.url}
                                 onChange={(e) => setData('url', e.target.value)}
                                 className="mt-1 w-full rounded-lg border-2 border-black bg-white p-2 text-xs font-medium text-black focus:outline-none focus:ring-0"
@@ -168,7 +160,9 @@ export default function ResourceItemModal({
                             placeholder={
                                 isStickyNote
                                     ? 'Sticky Title...'
-                                    : 'Enter item title...'
+                                    : isLink
+                                      ? 'Website or Article Name...'
+                                      : 'Enter item title...'
                             }
                             value={data.title}
                             onChange={(e) => setData('title', e.target.value)}
@@ -185,7 +179,7 @@ export default function ResourceItemModal({
                         )}
                     </div>
 
-                    {/* FORMULA CHEAT SHEET (MULTIPLE LINED INPUTS) */}
+                    {/* FORMULA CHEAT SHEET */}
                     {isFormula && (
                         <div className="rounded-xl border-2 border-black bg-white p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                             <div className="flex items-center justify-between pb-2">
@@ -197,7 +191,6 @@ export default function ResourceItemModal({
                                 </span>
                             </div>
 
-                            {/* LINED PAPER CONTAINER */}
                             <div
                                 className="space-y-2 rounded-lg border border-indigo-100 p-2"
                                 style={{
@@ -243,7 +236,6 @@ export default function ResourceItemModal({
                                 ))}
                             </div>
 
-                            {/* ADD FORMULA LINE BUTTON */}
                             <button
                                 type="button"
                                 onClick={addFormulaField}
@@ -287,15 +279,15 @@ export default function ResourceItemModal({
                         </div>
                     )}
 
-                    {/* LINK / VIDEO DESCRIPTION */}
-                    {(data.type === 'video' || data.type === 'link') && (
+                    {/* WEB LINK DESCRIPTION */}
+                    {isLink && (
                         <div>
                             <label className="block text-xs font-black uppercase text-gray-700">
                                 Description (Optional)
                             </label>
                             <textarea
                                 rows="2"
-                                placeholder="Brief summary of this resource..."
+                                placeholder="Brief summary of this article or link..."
                                 value={data.description}
                                 onChange={(e) =>
                                     setData('description', e.target.value)
@@ -313,7 +305,7 @@ export default function ResourceItemModal({
                             className={`w-full rounded-lg border-2 border-black py-2 text-xs font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none disabled:opacity-50 ${
                                 isStickyNote
                                     ? 'bg-amber-400 text-black hover:bg-amber-500'
-                                    : 'bg-red-600 text-white hover:bg-red-700'
+                                    : 'bg-black text-white hover:bg-gray-800'
                             }`}
                         >
                             {processing ? 'Saving...' : 'Save Resource'}

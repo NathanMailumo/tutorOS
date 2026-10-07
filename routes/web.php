@@ -7,6 +7,7 @@ use App\Http\Controllers\ResourceItemController;
 use App\Http\Controllers\ResourceUserController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\YouTubeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -91,6 +92,9 @@ Route::middleware('auth')->group(function () {
 
     // settings route
     Route::get('/settings', [SettingController::class, 'showSettings'])->name('settings');
+
+    // youtubecontroller
+    Route::get('/youtube/search', [YouTubeController::class, 'search'])->name('youtube.search');
 });
 
 require __DIR__ . '/auth.php';

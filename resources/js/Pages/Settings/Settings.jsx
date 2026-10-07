@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { CreditCard, Download, Key, ShieldAlert } from 'lucide-react';
+import { CreditCard, Download, ShieldAlert } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function Settings({ auth }) {
+export default function Settings() {
     const [defaultFormat, setDefaultFormat] = useState('pdf');
-    const [apiKey] = useState('tos_live_9f83a21bc4e08a91');
+    // const [apiKey] = useState('tos_live_9f83a21bc4e08a91');
 
     return (
         <AuthenticatedLayout>
