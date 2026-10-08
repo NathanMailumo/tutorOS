@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
     plugins: [
@@ -10,4 +11,17 @@ export default defineConfig({
         }),
         react(),
     ],
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+            react: path.resolve('./node_modules/react'),
+            'react-dom': path.resolve('./node_modules/react-dom'),
+        },
+    },
+    server: {
+        host: '127.0.0.1',
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });

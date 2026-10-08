@@ -2,8 +2,10 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import Resource from '@/Components/Resource';
+import { useUser } from '@clerk/clerk-react';
 
 export default function Dashboard({ resources = [], pendingInvitations = [] }) {
+    const { isLoaded } = useUser();
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const handleAccept = (resourceId) => {
@@ -21,6 +23,16 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                 : `/resources/${resourceId}/decline`,
         );
     };
+
+    if (!isLoaded) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-white font-black">
+                <p className="text-sm uppercase tracking-wider text-black">
+                    Loading Workspace...
+                </p>
+            </div>
+        );
+    }
 
     return (
         <AuthenticatedLayout resources={resources}>
@@ -98,7 +110,7 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
 
                 {/* RESPONSIVE NEO-BRUTALIST CANVAS GRID */}
                 <div className="my-6 grid w-full max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    {/* 1. YOUTUBE CARD FEATURE */}
+                    {/* YOUTUBE CARD FEATURE */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-2">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -125,7 +137,7 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                         </div>
                     </div>
 
-                    {/* 2. STICKY NOTE FEATURE */}
+                    {/* STICKY NOTE FEATURE */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:rotate-1">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-[#FEF08A] p-4 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -149,7 +161,7 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                         </div>
                     </div>
 
-                    {/* 3. FORMULA CHEAT SHEET FEATURE */}
+                    {/* FORMULA CHEAT SHEET FEATURE */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-2">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -176,7 +188,7 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                         </div>
                     </div>
 
-                    {/* 4. REVISION PACKS FEATURE */}
+                    {/* REVISION PACKS FEATURE */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:rotate-2">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-[#8A2BE2] p-4 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -205,7 +217,7 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                         </div>
                     </div>
 
-                    {/* 5. WEBSITE LINK FEATURE */}
+                    {/* WEBSITE LINK FEATURE */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-1">
                         <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
@@ -229,7 +241,7 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                         </div>
                     </div>
 
-                    {/* 6. CREATE NEW RESOURCE CARD */}
+                    {/* CREATE NEW RESOURCE CARD */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:rotate-2">
                         <div className="flex min-h-[230px] flex-col items-center justify-between rounded-2xl border-2 border-dashed border-black bg-[#2ED573]/15 p-4 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="my-auto flex flex-col items-center">

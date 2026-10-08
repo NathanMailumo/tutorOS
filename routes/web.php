@@ -8,93 +8,75 @@ use App\Http\Controllers\ResourceUserController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\YouTubeController;
+use App\Http\Controllers\ClerkSyncController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin'       => Route::has('login'),
-        'canRegister'    => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion'     => PHP_VERSION,
-    ]);
+// Web Session Middleware Group for Unauthenticated / Public Sync Routes
+Route::middleware(['web'])->group(function () {
+    Route::post('/clerk-sync', [ClerkSyncController::class, 'store'])->name('clerk.sync');
+    Route::get('/sso-callback', fn() => Inertia::render('Auth/SSOCallback'))->name('sso.callback');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'dashboard'])
-        ->name('dashboard');
+Route::middleware(['web', 'guest'])->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('Welcome');
+    })->name('welcome');
+
+    Route::get('/register', function () {
+        return Inertia::render('Auth/Register');
+    })->name('register');
+
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+
+    Route::get('/forgot-password', function () {
+        return Inertia::render('Auth/ForgotPassword');
+    })->name('password.request');
+});
+
+// Protected Application Routes
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 
     // Sessions Routes
-    Route::get('/sessions', [SessionController::class, 'sessionIndex'])
-        ->middleware('verified')
-        ->name('sessions.index');
-    
-    Route::get('/sessiosn/create', [SessionController::class, 'sessionCreate'])
-        ->middleware('verified')
-        ->name('sessions.create');
+    Route::get('/sessions', [SessionController::class, 'sessionIndex'])->name('sessions.index');
+    Route::get('/sessions/create', [SessionController::class, 'sessionCreate'])->name('sessions.create');
+    Route::post('/sessions/create', [SessionController::class, 'studycreate'])->name('sessions.store');
+    Route::get('/session/{id}', [SessionController::class, 'session_show'])->name('sessions.show');
 
-    // session post routes
-    Route::post('/sessions/create', [SessionController::class, 'studycreate'])
-        ->middleware('verified')
-        ->name('sessions.store');
-    Route::get('/session/{id}', [SessionController::class, 'session_show'])
-        ->middleware('verified')
-        ->name('sessions.show');
-
-    // Resource Management (ResourceController)
-    Route::get('/resources', [ResourceController::class, 'resourceIndex'])
-        ->middleware('verified')
-        ->name('resources.index');
-
-    Route::post('/resources', [ResourceController::class, 'createResource'])
-        ->middleware('verified')
-        ->name('resources.store');
-
-    Route::delete('/resources/{resource}', [ResourceController::class, 'destroy'])
-        ->middleware('verified')
-        ->name('resources.destroy');
-
-    Route::get('/resources/private/{resource}', [ResourceController::class, 'privateResource'])
-        ->middleware('verified')
-        ->name('resources.private');
-
-    Route::get('/resources/public/{resource}', [ResourceController::class, 'publicResource'])
-        ->middleware('verified')
-        ->name('resources.public');
+    // Resource Management
+    Route::get('/resources', [ResourceController::class, 'resourceIndex'])->name('resources.index');
+    Route::post('/resources', [ResourceController::class, 'createResource'])->name('resources.store');
+    Route::delete('/resources/{resource}', [ResourceController::class, 'destroy'])->name('resources.destroy');
+    Route::get('/resources/private/{resource}', [ResourceController::class, 'privateResource'])->name('resources.private');
+    Route::get('/resources/public/{resource}', [ResourceController::class, 'publicResource'])->name('resources.public');
 
     // Workspace Main View
-    Route::get('/resources/{resource}', [ResourceController::class, 'show'])
-        ->name('resources.show');
+    Route::get('/resources/{resource}', [ResourceController::class, 'show'])->name('resources.show');
 
     // Resource Items
-    Route::post('/resource-items', [ResourceItemController::class, 'store'])
-        ->name('resource-items.store');
+    Route::post('/resource-items', [ResourceItemController::class, 'store'])->name('resource-items.store');
 
-    // Collaborators & Members (ResourceUserController)
-    Route::get('/resources/{resource}/collaborators', [ResourceUserController::class, 'members'])
-        ->name('resources.collaborators.index');
+    // Collaborators & Members
+    Route::get('/resources/{resource}/collaborators', [ResourceUserController::class, 'members'])->name('resources.collaborators.index');
+    Route::post('/resources/{resource}/invite', [ResourceUserController::class, 'invite'])->name('resources.invite');
+    Route::delete('/resources/{resource}/collaborators/{user}', [ResourceUserController::class, 'removeCollaborator'])->name('resources.collaborators.destroy');
 
-    Route::post('/resources/{resource}/invite', [ResourceUserController::class, 'invite'])
-        ->name('resources.invite');
-
-    Route::delete('/resources/{resource}/collaborators/{user}', [ResourceUserController::class, 'removeCollaborator'])
-        ->name('resources.collaborators.destroy');
-
-    // invite status routes
+    // Invite Status Routes
     Route::post('/resources/{resource}/accept', [ResourceUserController::class, 'acceptInvite'])->name('resources.invitations.accept');
     Route::post('/resources/{resource}/decline', [ResourceUserController::class, 'declineInvite'])->name('resources.invitations.decline');
 
-
-    // profile routes
+    // Profile Routes
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // settings route
+    // Settings Route
     Route::get('/settings', [SettingController::class, 'showSettings'])->name('settings');
 
-    // youtubecontroller
+    // YouTube Controller
     Route::get('/youtube/search', [YouTubeController::class, 'search'])->name('youtube.search');
 });
-
-require __DIR__ . '/auth.php';

@@ -35,7 +35,6 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
         }
     };
 
-    // Helper to extract YouTube Video ID for direct link previews
     const getYouTubeId = (url) => {
         const regExp =
             /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -43,7 +42,7 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
         return match && match[2].length === 11 ? match[2] : null;
     };
 
-    const handleDirectUrlSubmit = (e) => {
+    const handleDirectUrlSubmit = async (e) => {
         e.preventDefault();
         const videoId = getYouTubeId(directUrl);
 
@@ -52,16 +51,43 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
             return;
         }
 
-        const customVideo = {
-            id: videoId,
-            title: `YouTube Video (${videoId})`,
-            uploader: 'YouTube',
-            thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-            url: directUrl,
-        };
+        setLoading(true);
+        setError('');
 
-        onSelectVideo(customVideo);
-        handleClose();
+        try {
+            const res = await fetch(
+                `https://www.youtube.com/oembed?url=${encodeURIComponent(directUrl)}&format=json`,
+            );
+
+            if (!res.ok) throw new Error('Could not fetch video info');
+
+            const data = await res.json();
+
+            const customVideo = {
+                id: videoId,
+                title: data.title,
+                uploader: data.author_name,
+                thumbnail:
+                    data.thumbnail_url ||
+                    `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                url: directUrl,
+            };
+
+            onSelectVideo(customVideo);
+            handleClose();
+        } catch (err) {
+            const fallbackVideo = {
+                id: videoId,
+                title: 'YouTube Video',
+                uploader: 'YouTube Channel',
+                thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                url: directUrl,
+            };
+            onSelectVideo(fallbackVideo);
+            handleClose();
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleConfirmSelection = () => {
@@ -86,7 +112,7 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
                 {/* HEADER & MODE SWITCHER */}
                 <div className="flex items-center justify-between border-b-2 border-black pb-3">
                     <h2 className="text-base font-black uppercase">
-                        ▶ YouTube Resource
+                        YouTube Resource
                     </h2>
                     <button
                         onClick={handleClose}
@@ -101,13 +127,20 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
                     <button
                         type="button"
                         onClick={() => setMode('search')}
-                        className={`flex-1 rounded-lg border-2 border-black py-1.5 text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-black py-1.5 text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
                             mode === 'search'
                                 ? 'bg-red-500 text-white'
                                 : 'bg-gray-100 text-black'
                         }`}
                     >
-                        🔍 In-App Search
+                        {/* YouTube SVG Icon */}
+                        <svg
+                            className="h-4 w-4 fill-current"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        In-App Search
                     </button>
                     <button
                         type="button"
@@ -118,7 +151,7 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
                                 : 'bg-gray-100 text-black'
                         }`}
                     >
-                        🔗 Direct URL
+                        Direct URL
                     </button>
                 </div>
 
@@ -219,9 +252,10 @@ export default function YouTubePickerModal({ isOpen, onClose, onSelectVideo }) {
 
                         <button
                             type="submit"
-                            className="w-full rounded-lg border-2 border-black bg-black py-2 text-xs font-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800"
+                            disabled={loading}
+                            className="w-full rounded-lg border-2 border-black bg-black py-2 text-xs font-black text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-800 disabled:opacity-50"
                         >
-                            Add Video Link
+                            {loading ? 'Fetching Details...' : 'Add Video Link'}
                         </button>
                     </form>
                 )}

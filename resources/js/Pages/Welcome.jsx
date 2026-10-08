@@ -1,7 +1,8 @@
+import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link } from '@inertiajs/react';
 
-export default function Welcome({ auth }) {
+export default function Welcome() {
     return (
         <GuestLayout>
             <Head title="Teaching Made Smarter" />
@@ -97,18 +98,15 @@ export default function Welcome({ auth }) {
 
                 {/* MAIN HERO CENTER */}
                 <div className="z-20 mx-auto my-auto flex max-w-xl flex-col items-center text-center">
-                    {/* Category Tag */}
                     <div className="mb-4 inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#FF6B35] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:mb-6 md:text-sm">
                         <span>🎓</span> Peer-Mentor Platform
                     </div>
 
-                    {/* Main Headline */}
                     <h1 className="mb-3 text-4xl font-black leading-[1.1] tracking-tight text-[#121212] sm:mb-4 sm:text-5xl md:text-6xl lg:text-7xl">
                         Teaching made <br />
                         <span className="text-[#FF6B35]">smarter.</span>
                     </h1>
 
-                    {/* Subheadline */}
                     <p className="mb-6 max-w-lg text-sm font-medium leading-relaxed text-gray-600 sm:mb-8 sm:text-base md:text-lg">
                         TutorOS generates complete teaching sessions, quizzes,
                         and revision packs for peer mentors.
@@ -116,30 +114,19 @@ export default function Welcome({ auth }) {
 
                     {/* Action Buttons */}
                     <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
-                        {auth?.user ? (
-                            <Link
-                                href={route('dashboard')}
-                                className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
-                            >
-                                Go To Dashboard
-                            </Link>
-                        ) : (
-                            <>
-                                <Link
-                                    href={route('register')}
-                                    className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
-                                >
-                                    Get Started Free
-                                </Link>
+                        <Link
+                            href={route('register')}
+                            className="w-full rounded-2xl border-2 border-black bg-[#FF6B35] px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
+                        >
+                            Get Started Free
+                        </Link>
 
-                                <Link
-                                    href={route('login')}
-                                    className="w-full rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-[#121212] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
-                                >
-                                    Sign In
-                                </Link>
-                            </>
-                        )}
+                        <Link
+                            href={route('login')}
+                            className="w-full rounded-2xl border-2 border-black bg-white px-6 py-3.5 text-center text-sm font-black uppercase tracking-wider text-[#121212] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:w-auto sm:px-8 sm:py-4"
+                        >
+                            Sign In
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -20,13 +20,16 @@ class OpenRouterService
     {
         // Explicitly enforce double line-breaks, spacing, and structured layouts
         $systemPrompt = <<<EOT
-You are TutorOS, an elite AI study assistant. 
+You are TutorOS, an elite AI study assistant.
 
 FORMATTING RULES:
-1. Always use double line breaks between paragraphs and sections to prevent wall-of-text formatting.
-2. Use bold section titles (##, ###) and clear bullet points for list items.
-3. Keep paragraphs short (maximum 2-3 sentences per paragraph).
-4. Format mathematical equations using standard LaTeX ($ for inline math, $$ for block math).
+1. Always insert two full line breaks (\n\n) between every heading, paragraph, bullet list, and mathematical block to ensure clean vertical spacing.
+2. Structure concepts into distinct segments:
+   - Use Markdown headings (## Topic, ### Subtopic) for major transitions.
+   - Keep paragraphs short (maximum 2-3 sentences per paragraph).
+   - Never collapse ideas into wall-of-text blocks.
+3. For lists and takeaways, use bullet points (-) with a space, and place each item on a new line.
+4. Format mathematical equations using standard LaTeX ($...$ for inline math, $$...$$ on its own line for block math).
 EOT;
 
         $userPrompt = "FOCUS AREA / USER INSTRUCTION:\n{$focusPrompt}\n\nSTUDY MATERIAL / CONTENT:\n{$content}";

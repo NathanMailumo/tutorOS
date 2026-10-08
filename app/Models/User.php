@@ -22,35 +22,13 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'clerk_id',
         'name',
         'email',
-        'password',
         'profile_image_url',
-        'profile_image_public_id',
+        // 'profile_image_public_id',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
 
     public function resourceItems(): HasMany
     {
@@ -64,10 +42,4 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    // public function collaboratingResources(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Resource::class, 'resource_user')
-    //         ->withPivot('status')
-    //         ->withTimestamps();
-    // }
 }

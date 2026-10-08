@@ -148,7 +148,7 @@ export default function SessionShow({ session }) {
                                 </p>
                             </div>
                         ) : (
-                            <div className="prose dark:prose-invert max-w-none font-bold">
+                            <div className="prose max-w-none text-xs leading-relaxed">
                                 <ReactMarkdown
                                     remarkPlugins={[remarkMath]}
                                     rehypePlugins={[rehypeKatex]}

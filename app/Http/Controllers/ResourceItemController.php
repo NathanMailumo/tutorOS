@@ -13,53 +13,62 @@ use Inertia\Inertia;
 class ResourceItemController extends Controller
 {
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'resource_id' => 'required|exists:resources,id',
-        'type'        => 'required|string',
-        'title'       => 'required|string|max:255',
-        'url'         => 'nullable|url',
-        'content'     => 'nullable|string',
-        'description' => 'nullable|string',
-        'metadata'    => 'nullable|array',
-    ]);
+    {
+        $validated = $request->validate([
+            'resource_id' => 'required|exists:resources,id',
+            'type'        => 'required|string',
+            'title'       => 'required|string|max:255',
+            'url'         => 'nullable|string',
+            'content'     => 'nullable|string',
+            'description' => 'nullable|string',
+            'metadata'    => 'nullable|array',
+        ]);
 
-    $metadata = $validated['metadata'] ?? [];
+        $metadata = $request->input('metadata', []);
 
-    if (!empty($validated['url'])) {
-        $host = parse_url($validated['url'], PHP_URL_HOST) ?? '';
-        $metadata['domain'] = $host;
+        if (!empty($validated['url'])) {
+            $host = parse_url($validated['url'], PHP_URL_HOST) ?? '';
+            $metadata['domain'] = $host;
 
-        // Check for both youtube.com and youtu.be shortlinks
-        $isYouTube = str_contains($host, 'youtube.com') || str_contains($host, 'youtu.be');
+            $isYouTube = str_contains($host, 'youtube.com') || str_contains($host, 'youtu.be');
 
-        if ($validated['type'] === 'video' && $isYouTube) {
-            try {
-                // withoutVerifying() prevents cURL SSL errors on local servers (XAMPP)
-                $response = Http::withoutVerifying()->get('https://www.youtube.com/oembed', [
-                    'url'    => $validated['url'],
-                    'format' => 'json',
-                ]);
+            if ($validated['type'] === 'video' && $isYouTube) {
+                try {
+                    // Query YouTube oEmbed endpoint (free, no API key needed)
+                    $response = Http::withoutVerifying()->get('https://www.youtube.com/oembed', [
+                        'url'    => $validated['url'],
+                        'format' => 'json',
+                    ]);
 
-                if ($response->successful()) {
-                    $oembed = $response->json();
-                    $metadata['author_name']   = $oembed['author_name'] ?? '';
-                    $metadata['thumbnail_url'] = $oembed['thumbnail_url'] ?? '';
-                    $metadata['provider_name']  = $oembed['provider_name'] ?? 'YouTube';
+                    if ($response->successful()) {
+                        $oembed = $response->json();
+
+                        // OVERWRITE DUMMY TITLE & DESCRIPTION WITH REAL OEMBED METADATA
+                        if (!empty($oembed['title'])) {
+                            $validated['title'] = html_entity_decode($oembed['title']);
+                        }
+
+                        if (!empty($oembed['author_name'])) {
+                            $validated['description'] = 'Channel: ' . $oembed['author_name'];
+                            $metadata['author_name']  = $oembed['author_name'];
+                        }
+
+                        $metadata['thumbnail_url'] = $oembed['thumbnail_url'] ?? '';
+                        $metadata['provider_name']  = $oembed['provider_name'] ?? 'YouTube';
+                    }
+                } catch (\Exception $e) {
+                    // Gracefully fallback to submitted title/description if oEmbed fails
                 }
-            } catch (\Exception $e) {
-                // Graceful fallback if oEmbed fails
             }
         }
+
+        $validated['metadata'] = $metadata;
+        $validated['user_id']  = $request->user()->id;
+
+        ResourceItem::create($validated);
+
+        return redirect()->back();
     }
-
-    $validated['metadata'] = $metadata;
-    $validated['user_id']  = $request->user()->id;
-
-    ResourceItem::create($validated);
-
-    return redirect()->back();
-}
 
     public function show(Resource $resource): Response
     {

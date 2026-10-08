@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import Resource from '@/Components/Resource';
+import { useClerk } from '@clerk/clerk-react';
 
 export default function AuthenticatedLayout({ children, resources }) {
     const { url, props } = usePage();
@@ -18,6 +19,28 @@ export default function AuthenticatedLayout({ children, resources }) {
 
     const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const { signOut } = useClerk();
+
+    const handleLogout = async () => {
+        try {
+            // 1. Sign out of Clerk frontend session
+            await signOut();
+        } catch (err) {
+            console.warn('Clerk sign out error:', err);
+        } finally {
+            // 2. Terminate Laravel session backend & redirect to /login
+            router.post(
+                route('logout'),
+                {},
+                {
+                    onFinish: () => {
+                        window.location.href = '/login';
+                    },
+                },
+            );
+        }
+    };
 
     return (
         <>
@@ -123,18 +146,14 @@ export default function AuthenticatedLayout({ children, resources }) {
                     {/* SIDEBAR HEADER / BRANDING */}
                     <div className="flex items-center justify-between border-b border-[#2f2f2f] px-3 py-4">
                         <div className="inline-flex items-center gap-3 whitespace-nowrap">
-                            {/* RED TOS LOGO BADGE */}
                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 border-black bg-red-600 text-xs font-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                 TOS
                             </div>
-
-                            {/* INLINE TEXT */}
                             <span className="text-lg font-black leading-none tracking-tight text-red-500">
                                 TutorOS
                             </span>
                         </div>
 
-                        {/* MOBILE CLOSE BUTTON */}
                         <button
                             type="button"
                             onClick={() => setIsMobileMenuOpen(false)}
@@ -144,6 +163,7 @@ export default function AuthenticatedLayout({ children, resources }) {
                             ✕
                         </button>
                     </div>
+
                     {/* 1. HOME LINK */}
                     <div className="space-y-1">
                         <Link
@@ -191,7 +211,6 @@ export default function AuthenticatedLayout({ children, resources }) {
                             <span>Create</span>
                         </button>
 
-                        {/* DYNAMIC PRIVATE RESOURCES LIST */}
                         {privateResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
                                 {privateResources.map((item) => (
@@ -290,8 +309,6 @@ export default function AuthenticatedLayout({ children, resources }) {
                             <span>Create</span>
                         </button>
 
-                        {/* DYNAMIC PUBLIC RESOURCES LIST */}
-                        {/* DYNAMIC PUBLIC / COLLABORATIVE RESOURCES LIST */}
                         {publicResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
                                 {publicResources.map((item) => {
@@ -341,7 +358,6 @@ export default function AuthenticatedLayout({ children, resources }) {
                                                 </span>
                                             </Link>
 
-                                            {/* ONLY SHOW DELETE BUTTON IF USER IS THE OWNER */}
                                             {isOwner && (
                                                 <Link
                                                     method="delete"
@@ -419,7 +435,6 @@ export default function AuthenticatedLayout({ children, resources }) {
 
                 {/* BOTTOM SECTION: SETTINGS, PROFILE & LOGOUT */}
                 <div className="space-y-1 border-t border-[#2f2f2f] pt-3">
-                    {/* SETTINGS LINK */}
                     <Link
                         onClick={() => setIsMobileMenuOpen(false)}
                         href={route().has('settings') ? route('settings') : '#'}
@@ -453,7 +468,6 @@ export default function AuthenticatedLayout({ children, resources }) {
 
                     {/* PROFILE & LOGOUT ROW */}
                     <div className="flex items-center justify-between gap-1 pt-1">
-                        {/* PROFILE LINK */}
                         <Link
                             onClick={() => setIsMobileMenuOpen(false)}
                             href={
@@ -481,11 +495,9 @@ export default function AuthenticatedLayout({ children, resources }) {
                             </span>
                         </Link>
 
-                        {/* LOGOUT BUTTON */}
-                        <Link
-                            method="post"
-                            href={route().has('logout') ? route('logout') : '#'}
-                            as="button"
+                        <button
+                            type="button"
+                            onClick={handleLogout}
                             className="shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-[#252525] hover:text-red-400"
                             title="Log Out"
                         >
@@ -502,7 +514,7 @@ export default function AuthenticatedLayout({ children, resources }) {
                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                                 />
                             </svg>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </aside>
