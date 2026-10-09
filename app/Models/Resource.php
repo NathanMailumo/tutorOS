@@ -16,14 +16,14 @@ class Resource extends Model
 
     protected $fillable = [
         'course_name',
-        'user_id',
+        'clerk_id',
         // 'study_session_id',
         'resource_type',
     ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'clerk_id', 'clerk_id');
     }
 
     /**
@@ -31,7 +31,7 @@ class Resource extends Model
      */
     public function resourceItems(): HasMany
     {
-        return $this->hasMany(ResourceItem::class);
+        return $this->hasMany(ResourceItem::class)->where('status', 'active');
     }
 
     /**
@@ -40,7 +40,7 @@ class Resource extends Model
     public function collaborators(): BelongsToMany
     {
         // Explicitly set table name to 'resource_users'
-        return $this->belongsToMany(User::class, 'resource_users')
+        return $this->belongsToMany(User::class, 'resource_users', 'resource_id', 'clerk_id', 'id', 'clerk_id')
             ->withPivot(['role', 'status'])
             ->withTimestamps();
     }

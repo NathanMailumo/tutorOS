@@ -9,7 +9,7 @@ class ResourceUser extends Model
     protected $table = 'resource_users';
 
     protected $fillable = [
-        'user_id',
+        'clerk_id',
         'resource_id',
         'role',
         'status',

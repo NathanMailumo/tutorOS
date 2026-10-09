@@ -32,12 +32,12 @@ class User extends Authenticatable
 
     public function resourceItems(): HasMany
     {
-        return $this->hasMany(ResourceItem::class);
+        return $this->hasMany(ResourceItem::class, 'clerk_id', 'clerk_id');
     }
 
     public function sharedResources(): BelongsToMany
     {
-        return $this->belongsToMany(Resource::class, 'resource_users')
+        return $this->belongsToMany(Resource::class, 'resource_users', 'clerk_id', 'resource_id', 'clerk_id', 'id')
             ->withPivot('status')
             ->withTimestamps();
     }

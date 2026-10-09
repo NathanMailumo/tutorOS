@@ -12,14 +12,14 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        $resources = Resource::where('user_id', $user->id)
+        $resources = Resource::where('clerk_id', $user->clerk_id)
             ->orWhereHas('collaborators', function ($q) use ($user) {
-                $q->where('user_id', $user->id)->where('status', 'accepted');
+                $q->where('users.clerk_id', $user->clerk_id)->where('status', 'accepted');
             })
             ->get();
 
         $pendingInvitations = Resource::whereHas('collaborators', function ($q) use ($user) {
-            $q->where('user_id', $user->id)
+            $q->where('users.clerk_id', $user->clerk_id)
                 ->where('status', 'pending');
         })->with('user:id,name,email')->get();
 

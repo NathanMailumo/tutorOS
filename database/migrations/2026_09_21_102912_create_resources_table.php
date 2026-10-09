@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
             $table->string('course_name');
-            $table->foreignId('user_id');
+            $table->string('clerk_id')->nullable();
+            $table->foreign('clerk_id')->references('clerk_id')->on('users')->nullOnDelete();
             // $table->foreignId('study_session_id');
             $table->enum('resource_type', ['private', 'public']);
             $table->timestamps();

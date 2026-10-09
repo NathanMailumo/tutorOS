@@ -55,8 +55,8 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                     </h1>
                     <p className="text-xs font-bold leading-relaxed text-gray-600">
                         Organize your study workflows. Collect videos, notes,
-                        web links, formula cheat sheets, and AI-generated
-                        revision packs all in one visual workspace.
+                        web links, practice questions, and AI-generated revision
+                        packs all in one visual workspace.
                     </p>
                 </div>
 
@@ -161,28 +161,27 @@ export default function Dashboard({ resources = [], pendingInvitations = [] }) {
                         </div>
                     </div>
 
-                    {/* FORMULA CHEAT SHEET FEATURE */}
+                    {/* PRACTICE QUESTIONS FEATURE */}
                     <div className="w-full transition-all hover:rotate-0 hover:scale-[1.02] sm:-rotate-2">
-                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="flex min-h-[230px] flex-col justify-between rounded-2xl border-2 border-black bg-sky-100 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div>
                                 <div className="flex items-center justify-between border-b border-gray-100 pb-1">
-                                    <span className="text-[9px] font-black uppercase text-blue-600">
-                                        Cheat Sheet
+                                    <span className="text-[9px] font-black uppercase text-sky-700">
+                                        Practice Bank
                                     </span>
-                                    <span className="rounded border border-black/20 bg-blue-100 px-1.5 py-0.5 text-[9px] font-black text-blue-800">
-                                        Math / Sci
+                                    <span className="rounded border border-black/20 bg-white px-1.5 py-0.5 text-[9px] font-black text-sky-800">
+                                        PDF / Images
                                     </span>
                                 </div>
                                 <h3 className="mt-2 text-xs font-black text-[#121212]">
-                                    Formula Cheat Sheet
+                                    Past Practice Questions
                                 </h3>
                                 <p className="mb-2 mt-1 text-[10px] font-medium text-gray-500">
-                                    Store essential formulas in one place:
+                                    Upload past questions and view them inside
+                                    TutorOS while you revise.
                                 </p>
-                                <div className="space-y-1 rounded-lg border border-black/10 bg-gray-50 p-2 font-mono text-[10px] font-bold text-gray-700">
-                                    <div>• E = mc²</div>
-                                    <div>• A = πr²</div>
-                                    <div>• a² + b² = c²</div>
+                                <div className="rounded-lg border-2 border-black bg-white p-2 text-[10px] font-bold text-sky-800">
+                                    📄 Questions preview appears on each card
                                 </div>
                             </div>
                         </div>

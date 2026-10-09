@@ -1,10 +1,21 @@
+import { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 
-export default function Resource({ isOpen, onClose }) {
+export default function Resource({
+    isOpen,
+    onClose,
+    defaultResourceType = 'private',
+}) {
     const { data, setData, post, processing, errors, reset } = useForm({
         course_name: '',
         resource_type: 'private',
     });
+
+    useEffect(() => {
+        if (isOpen) {
+            setData('resource_type', defaultResourceType);
+        }
+    }, [defaultResourceType, isOpen, setData]);
 
     if (!isOpen) {
         return null;

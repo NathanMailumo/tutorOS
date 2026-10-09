@@ -11,7 +11,7 @@ class ResourceController extends Controller
 {
     public function resourceIndex(Request $request)
     {
-        $latest = Resource::where('user_id', $request->user()->id)->latest()->first();
+        $latest = Resource::where('clerk_id', $request->user()->clerk_id)->latest()->first();
 
         if ($latest) {
             return redirect()->route('resources.show', $latest->id);
@@ -27,7 +27,7 @@ class ResourceController extends Controller
             'resource_type' => 'required|in:private,public',
         ]);
 
-        $validated['user_id'] = $request->user()->id;
+        $validated['clerk_id'] = $request->user()->clerk_id;
 
         $resource = Resource::create($validated);
 
@@ -40,7 +40,7 @@ class ResourceController extends Controller
 
     public function destroy(Request $request, Resource $resource)
     {
-        abort_unless($resource->user_id === $request->user()->id, 403);
+        abort_unless($resource->clerk_id === $request->user()->clerk_id, 403);
 
         $resource->delete();
 
@@ -52,12 +52,10 @@ class ResourceController extends Controller
      */
     public function show(Resource $resource)
     {
-        $userId = Auth::id();
-
         // Check ownership or active collaboration access
-        $isOwner = $resource->user_id === $userId;
+        $isOwner = $resource->clerk_id === Auth::user()->clerk_id;
         $isCollaborator = $resource->collaborators()
-            ->where('user_id', $userId)
+            ->where('users.clerk_id', Auth::user()->clerk_id)
             ->exists();
 
         if (!$isOwner && !$isCollaborator) {
@@ -77,7 +75,7 @@ class ResourceController extends Controller
 
     public function privateResource(Request $request, Resource $resource)
     {
-        if ($resource->user_id !== $request->user()->id) {
+        if ($resource->clerk_id !== $request->user()->clerk_id) {
             abort(403, 'Unauthorized access to this private resource.');
         }
 
@@ -93,10 +91,9 @@ class ResourceController extends Controller
 
     public function publicResource(Request $request, Resource $resource)
     {
-        $userId = Auth::id();
-        $isOwner = $resource->user_id === $userId;
+        $isOwner = $resource->clerk_id === Auth::user()->clerk_id;
         $isCollaborator = $resource->collaborators()
-            ->where('user_id', $userId)
+            ->where('users.clerk_id', Auth::user()->clerk_id)
             ->exists();
 
         if (!$isOwner && !$isCollaborator) {

@@ -16,7 +16,7 @@ class Study_Session extends Model
     protected $table = 'study_sessions';
 
     protected $fillable = [
-        'user_id',
+        'clerk_id',
         'course_title',
         'course_code',
         'input_option',

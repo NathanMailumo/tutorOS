@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('study_sessions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('clerk_id');
+            $table->foreign('clerk_id')->references('clerk_id')->on('users')->cascadeOnDelete();
             $table->string('course_title');
             $table->string('course_code')->nullable();
             $table->enum('input_option', ['text', 'file']);

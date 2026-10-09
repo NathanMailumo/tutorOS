@@ -18,6 +18,7 @@ export default function AuthenticatedLayout({ children, resources }) {
     );
 
     const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
+    const [resourceModalType, setResourceModalType] = useState('private');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const { signOut } = useClerk();
@@ -204,7 +205,10 @@ export default function AuthenticatedLayout({ children, resources }) {
 
                         <button
                             type="button"
-                            onClick={() => setIsResourceModalOpen(true)}
+                            onClick={() => {
+                                setResourceModalType('private');
+                                setIsResourceModalOpen(true);
+                            }}
                             className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
                             <span className="text-sm font-bold">+</span>
@@ -302,7 +306,10 @@ export default function AuthenticatedLayout({ children, resources }) {
 
                         <button
                             type="button"
-                            onClick={() => setIsResourceModalOpen(true)}
+                            onClick={() => {
+                                setResourceModalType('public');
+                                setIsResourceModalOpen(true);
+                            }}
                             className="flex items-center gap-2 rounded-md px-2.5 py-1 text-xs transition-colors hover:bg-[#252525] hover:text-gray-200"
                         >
                             <span className="text-sm font-bold">+</span>
@@ -524,6 +531,7 @@ export default function AuthenticatedLayout({ children, resources }) {
 
             <Resource
                 isOpen={isResourceModalOpen}
+                defaultResourceType={resourceModalType}
                 onClose={() => setIsResourceModalOpen(false)}
             />
         </>

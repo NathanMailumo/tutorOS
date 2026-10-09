@@ -9,22 +9,40 @@ use App\Models\Resource;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Response;
 use Inertia\Inertia;
+use App\Services\CloudinaryService;
 
 class ResourceItemController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, CloudinaryService $cloudinary)
     {
         $validated = $request->validate([
             'resource_id' => 'required|exists:resources,id',
-            'type'        => 'required|string',
+            'type'        => 'required|in:video,link,pq,note',
             'title'       => 'required|string|max:255',
             'url'         => 'nullable|string',
             'content'     => 'nullable|string',
             'description' => 'nullable|string',
             'metadata'    => 'nullable|array',
+            'file'        => 'required_if:type,pq|nullable|file|mimes:pdf,png,jpg,jpeg,webp,txt|max:2048',
         ]);
 
         $metadata = $request->input('metadata', []);
+
+        if ($validated['type'] === 'pq') {
+            $upload = $cloudinary->uploadResourceFile($request->file('file'));
+
+            abort_unless($upload, 503, 'Practice question upload failed. Please try again.');
+
+            $metadata = [
+                'file_url' => $upload['url'],
+                'public_id' => $upload['public_id'],
+                'file_name' => $request->file('file')->getClientOriginalName(),
+                'mime_type' => $request->file('file')->getMimeType(),
+                'file_size' => $request->file('file')->getSize(),
+            ];
+        }
+
+        unset($validated['file']);
 
         if (!empty($validated['url'])) {
             $host = parse_url($validated['url'], PHP_URL_HOST) ?? '';
@@ -63,9 +81,23 @@ class ResourceItemController extends Controller
         }
 
         $validated['metadata'] = $metadata;
-        $validated['user_id']  = $request->user()->id;
+        $validated['clerk_id'] = $request->user()->clerk_id;
+        $validated['status'] = 'active';
 
         ResourceItem::create($validated);
+
+        return redirect()->back();
+    }
+
+    public function destroy(Request $request, ResourceItem $resourceItem)
+    {
+        abort_unless(
+            $resourceItem->clerk_id === $request->user()->clerk_id
+                && $resourceItem->resource->clerk_id === $request->user()->clerk_id,
+            403
+        );
+
+        $resourceItem->update(['status' => 'notActive']);
 
         return redirect()->back();
     }

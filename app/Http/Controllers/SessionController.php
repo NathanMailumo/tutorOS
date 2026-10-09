@@ -24,7 +24,7 @@ class SessionController extends Controller
 {
     public function sessionIndex()
     {
-        $sessions = Study_Session::where('user_id', Auth::id())
+        $sessions = Study_Session::where('clerk_id', Auth::user()->clerk_id)
             ->with(['sessionFile', 'sessionOutput'])
             ->latest()
             ->get();
@@ -54,11 +54,9 @@ class SessionController extends Controller
         }
 
         $resource = Resource::findOrFail($resourceId);
-        $userId = Auth::id();
-
-        $hasAccess = $resource->user_id === $userId
+        $hasAccess = $resource->clerk_id === Auth::user()->clerk_id
             || $resource->collaborators()
-                ->where('user_id', $userId)
+                ->where('users.clerk_id', Auth::user()->clerk_id)
                 ->exists();
 
         abort_unless($hasAccess, 403, 'You do not have access to this workspace.');
@@ -154,7 +152,7 @@ class SessionController extends Controller
             'file' => 'required_if:input_option,file|nullable|file|mimes:pdf,docx,txt,pptx|max:5120',
         ]);
 
-        $incomingFields['user_id'] = Auth::id();
+        $incomingFields['clerk_id'] = Auth::user()->clerk_id;
         $resource = $this->accessibleResource($incomingFields['resource_id'] ?? null);
 
         $sessionData = Arr::except($incomingFields, ['file']);
@@ -164,12 +162,13 @@ class SessionController extends Controller
 
             if ($resource) {
                 ResourceItem::create([
-                    'user_id' => Auth::id(),
+                    'clerk_id' => Auth::user()->clerk_id,
                     'resource_id' => $resource->id,
                     'study_session_id' => $session->id,
                     'type' => 'revision',
                     'title' => $session->course_title . ' Revision Pack',
                     'description' => 'Generated study session',
+                    'status' => 'active',
                 ]);
             }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 
 export default function ResourceItemModal({
@@ -7,8 +7,6 @@ export default function ResourceItemModal({
     resourceId,
     defaultType,
 }) {
-    const [formulas, setFormulas] = useState(['']);
-
     const { data, setData, post, processing, errors, reset, clearErrors } =
         useForm({
             resource_id: resourceId || '',
@@ -17,6 +15,7 @@ export default function ResourceItemModal({
             url: '',
             content: '',
             description: '',
+            file: null,
         });
 
     useEffect(() => {
@@ -27,51 +26,28 @@ export default function ResourceItemModal({
                 type: defaultType || 'note',
             }));
 
-            if (defaultType === 'formula') {
-                setFormulas(['']);
-            }
+            setData('file', null);
         }
     }, [defaultType, resourceId, isOpen, setData]);
 
     const handleClose = () => {
         reset();
-        setFormulas(['']);
+        setData('file', null);
         clearErrors();
         onClose();
-    };
-
-    const handleFormulaChange = (index, value) => {
-        const updated = [...formulas];
-        updated[index] = value;
-        setFormulas(updated);
-    };
-
-    const addFormulaField = () => {
-        setFormulas([...formulas, '']);
-    };
-
-    const removeFormulaField = (index) => {
-        if (formulas.length === 1) return;
-        setFormulas(formulas.filter((_, i) => i !== index));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const formattedContent =
-            data.type === 'formula'
-                ? formulas.filter((f) => f.trim() !== '').join('\n')
-                : data.content;
+        if (data.type === 'pq' && !data.file) return;
 
         post(
             typeof route === 'function'
                 ? route('resource-items.store')
                 : '/resource-items',
             {
-                data: {
-                    ...data,
-                    content: formattedContent,
-                },
+                forceFormData: true,
                 onSuccess: () => handleClose(),
             },
         );
@@ -80,7 +56,7 @@ export default function ResourceItemModal({
     if (!isOpen) return null;
 
     const isStickyNote = data.type === 'note';
-    const isFormula = data.type === 'formula';
+    const isPracticeQuestions = data.type === 'pq';
     const isLink = data.type === 'link';
 
     return (
@@ -97,7 +73,7 @@ export default function ResourceItemModal({
                     <div className="flex items-center gap-2">
                         <span className="text-lg">
                             {isLink && '🔗'}
-                            {isFormula && 'ƒ'}
+                            {isPracticeQuestions && '📄'}
                             {data.type === 'revision' && '📖'}
                             {isStickyNote && '📌'}
                         </span>
@@ -107,7 +83,9 @@ export default function ResourceItemModal({
                                 ? 'Sticky Note'
                                 : isLink
                                   ? 'Web Link'
-                                  : data.type}
+                                  : isPracticeQuestions
+                                    ? 'Practice Questions'
+                                    : data.type}
                         </h2>
                     </div>
                     <button
@@ -119,7 +97,7 @@ export default function ResourceItemModal({
                     </button>
                 </div>
 
-                {/* FORM CONTENT (For Link, Note, Formula, Revision) */}
+                {/* FORM CONTENT */}
                 <form onSubmit={handleSubmit} className="mt-4 space-y-4">
                     {/* WEB LINK URL INPUT */}
                     {isLink && (
@@ -179,70 +157,30 @@ export default function ResourceItemModal({
                         )}
                     </div>
 
-                    {/* FORMULA CHEAT SHEET */}
-                    {isFormula && (
-                        <div className="rounded-xl border-2 border-black bg-white p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                            <div className="flex items-center justify-between pb-2">
-                                <label className="block text-xs font-black uppercase text-indigo-900">
-                                    Formulas (Lined Paper)
-                                </label>
-                                <span className="text-[10px] font-bold text-gray-400">
-                                    {formulas.length} entries
-                                </span>
-                            </div>
-
-                            <div
-                                className="space-y-2 rounded-lg border border-indigo-100 p-2"
-                                style={{
-                                    backgroundImage:
-                                        'linear-gradient(transparent 95%, #e0e7ff 95%)',
-                                    backgroundSize: '100% 2.2rem',
-                                    lineHeight: '2.2rem',
-                                }}
-                            >
-                                {formulas.map((formula, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <span className="font-mono text-xs font-black text-indigo-400">
-                                            f({idx + 1})=
-                                        </span>
-                                        <input
-                                            type="text"
-                                            required
-                                            placeholder="e.g. A = πr²"
-                                            value={formula}
-                                            onChange={(e) =>
-                                                handleFormulaChange(
-                                                    idx,
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full border-b-2 border-indigo-400 bg-transparent px-1 py-0.5 font-mono text-xs font-bold text-indigo-950 focus:border-indigo-600 focus:outline-none"
-                                        />
-                                        {formulas.length > 1 && (
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeFormulaField(idx)
-                                                }
-                                                className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-red-100 text-xs font-black text-red-600 hover:bg-red-200"
-                                            >
-                                                ✕
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={addFormulaField}
-                                className="mt-3 flex w-full items-center justify-center gap-1 rounded-lg border-2 border-black bg-indigo-50 py-1.5 text-xs font-black text-indigo-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
-                            >
-                                + Add Another Formula
-                            </button>
+                    {/* PRACTICE QUESTION FILE */}
+                    {isPracticeQuestions && (
+                        <div className="rounded-xl border-2 border-black bg-sky-50 p-3">
+                            <label className="block text-xs font-black uppercase text-sky-900">
+                                Upload past practice questions
+                            </label>
+                            <p className="mt-1 text-[11px] font-medium text-sky-800">
+                                Add past practice questions or exam papers for
+                                revision. PDF, image, or text files under 2 MB.
+                            </p>
+                            <input
+                                type="file"
+                                required
+                                accept=".pdf,.png,.jpg,.jpeg,.webp,.txt"
+                                onChange={(e) =>
+                                    setData('file', e.target.files?.[0] || null)
+                                }
+                                className="mt-3 w-full rounded-lg border-2 border-black bg-white p-2 text-xs font-medium text-black"
+                            />
+                            {errors.file && (
+                                <p className="mt-1 text-[11px] font-bold text-red-600">
+                                    {errors.file}
+                                </p>
+                            )}
                         </div>
                     )}
 

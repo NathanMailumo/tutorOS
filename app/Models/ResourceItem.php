@@ -14,7 +14,8 @@ class ResourceItem extends Model
     protected $table = 'resource_items';
 
     protected $fillable = [
-        'user_id',
+        'clerk_id',
+        'status',
         'resource_id',
         'study_session_id',
         'type',
@@ -31,7 +32,7 @@ class ResourceItem extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'clerk_id', 'clerk_id');
     }
 
     /**

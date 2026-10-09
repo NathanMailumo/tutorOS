@@ -15,8 +15,7 @@ class ResourceUserController extends Controller
      */
     public function members(Resource $resource)
     {
-        $userId = Auth::id();
-        $isOwner = $resource->user_id === $userId;
+        $isOwner = $resource->clerk_id === Auth::user()->clerk_id;
 
         // Fetch collaborators from pivot table
         $collaborators = $resource->collaborators()
@@ -34,7 +33,7 @@ class ResourceUserController extends Controller
      */
     public function invite(Request $request, Resource $resource)
     {
-        if ($resource->user_id !== Auth::id()) {
+        if ($resource->clerk_id !== Auth::user()->clerk_id) {
             abort(403, 'Only the owner can invite collaborators.');
         }
 
@@ -44,12 +43,12 @@ class ResourceUserController extends Controller
 
         $userToInvite = User::where('email', $request->email)->first();
 
-        if ($userToInvite->id === Auth::id()) {
+        if ($userToInvite->clerk_id === Auth::user()->clerk_id) {
             return redirect()->back()->withErrors(['email' => 'You are already the owner of this workspace.']);
         }
 
         $resource->collaborators()->syncWithoutDetaching([
-            $userToInvite->id => ['status' => 'pending'],
+            $userToInvite->clerk_id => ['status' => 'pending'],
         ]);
 
         return redirect()->back()->with('success', 'User invited successfully.');
@@ -57,9 +56,7 @@ class ResourceUserController extends Controller
     // accepting a pending invitation
     public function acceptInvite(Resource $resource)
     {
-        $userId = Auth::id();
-
-        $resource->collaborators()->updateExistingPivot($userId, [
+        $resource->collaborators()->updateExistingPivot(Auth::user()->clerk_id, [
             'status' => 'accepted'
         ]);
 
@@ -70,9 +67,7 @@ class ResourceUserController extends Controller
     // decline an invite
     public function declineInvite(Resource $resource)
     {
-         $userId = Auth::id();
-
-        $resource->collaborators()->updateExistingPivot($userId, [
+        $resource->collaborators()->updateExistingPivot(Auth::user()->clerk_id, [
             'status' => 'declined'
         ]);
 
@@ -86,11 +81,11 @@ class ResourceUserController extends Controller
      */
     public function removeCollaborator(Resource $resource, User $user)
     {
-        if ($resource->user_id !== Auth::id()) {
+        if ($resource->clerk_id !== Auth::user()->clerk_id) {
             abort(403, 'Only the owner can remove collaborators.');
         }
 
-        $resource->collaborators()->detach($user->id);
+        $resource->collaborators()->detach($user->clerk_id);
 
         return redirect()->back()->with('success', 'Collaborator removed.');
     }

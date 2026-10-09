@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('resource_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('clerk_id');
+            $table->foreign('clerk_id')->references('clerk_id')->on('users')->cascadeOnDelete();
             $table->foreignId('resource_id')->constrained()->cascadeOnDelete();
             $table->enum('role', ['owner', 'viewer']);
             $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
             $table->timestamps();
-            $table->unique(['resource_id', 'user_id']);
+            $table->unique(['resource_id', 'clerk_id']);
         });
     }
 
