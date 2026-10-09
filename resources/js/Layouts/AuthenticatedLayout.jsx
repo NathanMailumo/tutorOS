@@ -11,10 +11,14 @@ export default function AuthenticatedLayout({ children, resources }) {
         resources && resources.length > 0 ? resources : props.resources || [];
 
     const privateResources = userResources.filter(
-        (item) => item.resource_type === 'private' && item.user_id === user?.id,
+        (item) =>
+            item.resource_type === 'private' &&
+            item.clerk_id === user?.clerk_id,
     );
     const publicResources = userResources.filter(
-        (item) => item.resource_type === 'public' || item.user_id !== user?.id,
+        (item) =>
+            item.resource_type === 'public' ||
+            item.clerk_id !== user?.clerk_id,
     );
 
     const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
@@ -319,7 +323,8 @@ export default function AuthenticatedLayout({ children, resources }) {
                         {publicResources.length > 0 && (
                             <div className="ml-3 mt-1 space-y-0.5 border-l border-[#2d2d2d] pl-2">
                                 {publicResources.map((item) => {
-                                    const isOwner = item.user_id === user?.id;
+                                    const isOwner =
+                                        item.clerk_id === user?.clerk_id;
 
                                     return (
                                         <div

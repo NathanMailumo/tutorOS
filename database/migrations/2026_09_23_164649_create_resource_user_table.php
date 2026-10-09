@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('resource_users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('clerk_id');
             $table->foreign('clerk_id')->references('clerk_id')->on('users')->cascadeOnDelete();
-            $table->foreignId('resource_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('resource_id')->constrained()->cascadeOnDelete();
             $table->enum('role', ['owner', 'viewer']);
             $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
             $table->timestamps();

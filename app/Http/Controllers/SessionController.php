@@ -36,7 +36,7 @@ class SessionController extends Controller
 
     public function sessionCreate(Request $request)
     {
-        $resourceId = $request->integer('resource_id') ?: null;
+        $resourceId = $request->input('resource_id') ?: null;
 
         if ($resourceId) {
             $this->accessibleResource($resourceId);
@@ -147,7 +147,7 @@ class SessionController extends Controller
             'input_option' => 'required|in:text,file',
             'raw_notes' => 'nullable|string',
             'focus_prompt' => 'required|string',
-            'resource_id' => 'nullable|integer|exists:resources,id',
+            'resource_id' => 'nullable|uuid|exists:resources,id',
             // Update validation rule to allow pptx
             'file' => 'required_if:input_option,file|nullable|file|mimes:pdf,docx,txt,pptx|max:5120',
         ]);

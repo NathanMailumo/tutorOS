@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('study_sessions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('clerk_id');
             $table->foreign('clerk_id')->references('clerk_id')->on('users')->cascadeOnDelete();
             $table->string('course_title');
@@ -23,7 +23,7 @@ return new class extends Migration
             // $table->string('file')->nullable();
             $table->string('focus_prompt');
             $table->longText('raw_notes')->nullable();
-            $table->foreignId('resource_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('resource_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }

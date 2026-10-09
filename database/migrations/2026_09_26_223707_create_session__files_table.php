@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('session_files', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('study_session_id')->constrained('study_sessions')->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('study_session_id')->constrained('study_sessions')->cascadeOnDelete();
             $table->string('file_name');
             $table->string('file_path');
             $table->string('file_type');

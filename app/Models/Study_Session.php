@@ -10,9 +10,14 @@ use App\Models\ResourceItem;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Resource;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Study_Session extends Model
 {
+    use HasUuids;
+
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $table = 'study_sessions';
 
     protected $fillable = [

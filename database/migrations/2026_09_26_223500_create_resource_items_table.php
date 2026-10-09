@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('resource_items', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('clerk_id');
             $table->foreign('clerk_id')->references('clerk_id')->on('users')->cascadeOnDelete();
-            $table->foreignId('resource_id')->constrained()->onDelete('cascade');
-            $table->foreignId('study_session_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('resource_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('study_session_id')->nullable()->constrained()->nullOnDelete();
 
             $table->enum('type', ['video', 'link', 'pq', 'revision', 'note']);
 

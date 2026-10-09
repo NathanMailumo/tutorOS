@@ -9,9 +9,14 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Study_Session;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Resource extends Model
 {
+    use HasUuids;
+
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $table = 'resources';
 
     protected $fillable = [

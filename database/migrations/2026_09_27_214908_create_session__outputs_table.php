@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('session_outputs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('study_session_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('study_session_id')->constrained()->cascadeOnDelete();
             $table->longText('content');
             $table->string('model_used');
             $table->string('prompt_tokens')->nullable();

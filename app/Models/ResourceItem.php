@@ -7,10 +7,15 @@ use App\Models\Resource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Study_Session;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 
 class ResourceItem extends Model
 {
+    use HasUuids;
+
+    protected $keyType = 'string';
+    public $incrementing = false;
     protected $table = 'resource_items';
 
     protected $fillable = [
